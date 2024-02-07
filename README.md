@@ -1,5 +1,10 @@
 ## Projekto pasileidimas
 
+## Prequisities 
+
+Install node version 19+  
+Install docker
+
 ## Frontend
 
 Install packages:
