@@ -4,6 +4,8 @@ import "./globals.css";
 import Provider from "@/app/context/client-provider"
 import { getServerSession } from "next-auth/next"
 import { authOptions } from "@/app/api/auth/[...nextauth]/route"
+import { LoginDialog } from "@/src/components/Dialogs/LoginDialog";
+import { RegistrationDialog } from "@/src/components/Dialogs/RegistrationDialog";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +24,10 @@ export default async function RootLayout({
     <html lang="en">
       <body className={inter.className}>
       <Provider session={session}>
+        <div>
+          <LoginDialog />
+          <RegistrationDialog />
+        </div>
         {children}
         </Provider>
         </body>
