@@ -18,21 +18,12 @@ import {
 import { TextField } from "@/src/components/Input/TextField"
 import { signIn } from "next-auth/react"
 
-const formSchema = z.object({
-    username: z.string().min(2, {
-      message: "Username must be at least 2 characters."
-    })
-  })
-
 export const  LoginDialog = () => {
-    const form = useForm<z.infer<typeof formSchema>>({
-        // resolver: zodResolver(formSchema),
-        defaultValues: {
-          // username: ""
-        }
+    const form = useForm({
+        defaultValues: {}
       })
      
-      const onSubmit = async (values: z.infer<typeof formSchema>) => {
+      const onSubmit = async (values: any) => {
         const result = await signIn('credentials', {
           redirect: false,
           ...values
