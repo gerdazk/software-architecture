@@ -18,6 +18,7 @@ import {
 import { TextField } from "@/src/components/Input/TextField"
 import { registerUser } from "@/src/utils/registerNewUser"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useState } from "react"
 
 const formSchema = z.object({
     email: z.string(),
@@ -26,6 +27,7 @@ const formSchema = z.object({
   }).required()
 
 export const  RegistrationDialog = () => {
+    const [successMessage, setSuccessMessage] = useState('')
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
@@ -37,6 +39,7 @@ export const  RegistrationDialog = () => {
             const result = await registerUser({...values})
 
             if (!result?.error) {
+              setSuccessMessage('Sign up successful. You can now log in.')
                 console.log('Successfully logged in:', result);
               } else {
                 console.error('Login failed:', result?.error);
@@ -60,7 +63,7 @@ export const  RegistrationDialog = () => {
         <TextField control={form.control} label="Password" description="" placeholder="" name="password" type="password" />
         <TextField control={form.control} label="Name" description="" placeholder="" name="name" />
         <DialogFooter>
-          <Button type="submit">Submit</Button>
+          {successMessage ? <div>{successMessage}</div> : <Button type="submit">Submit</Button> }
         </DialogFooter>
         </form>
     </Form>
