@@ -11,15 +11,12 @@ export default function Page() {
 
     const getCoaches = async () => {
         const allAwaitingCoaches = await getCoachesAwaitingConfirmation()
-        console.log({allAwaitingCoaches})
         allAwaitingCoaches && setCoaches(allAwaitingCoaches.users)
     }
 
 
     useEffect(() => {
-
         getCoaches()
-        
     }, [])
 
     
