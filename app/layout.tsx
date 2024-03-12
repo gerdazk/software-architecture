@@ -85,7 +85,9 @@ export default async function RootLayout({
 							</div>
 						</div>
 					</nav>
+					<div className="mx-3 mb-6">
 					{children}
+					</div>
 				</body>
 			</html>
 		</Provider>
