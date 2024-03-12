@@ -12,6 +12,8 @@ model User {
   name               String
   password           String
   email              String  @unique
+  city               String   @default("Vilnius")
+  description        String   @default("Esu treneris...")
   role               String   @default("user")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
