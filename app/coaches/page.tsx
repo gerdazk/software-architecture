@@ -19,11 +19,11 @@ export default function Page() {
 
 	return (
 		<div className='flex flex-col'>
-			<PageHeader title="All coaches"/>
-			<div className="gap-6 flex flex-col">
-			{coaches?.map(({ email, name }) => {
-				return <SingleCoachDisplay name={name} email={email} key={email} />;
-			})}
+			<PageHeader title='All coaches' />
+			<div className='gap-6 flex flex-col'>
+				{coaches?.map(({ email, name }) => {
+					return <SingleCoachDisplay name={name} email={email} key={email} />;
+				})}
 			</div>
 		</div>
 	);
