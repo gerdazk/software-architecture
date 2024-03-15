@@ -1,3 +1,16 @@
+interface SessionData {
+	title: string;
+	sport: string;
+	city: string;
+	date: Date;
+	sessionStart: string;
+	sessionFinish: string;
+	capacity: number;
+	description: string;
+	type: boolean;
+	approvable: boolean;
+}
+
 export async function createSession({
 	title,
 	sport,
@@ -9,7 +22,7 @@ export async function createSession({
 	description,
 	type,
 	approvable,
-}) {
+}: SessionData) {
 	try {
 		const response = await fetch('/api/sessions', {
 			method: 'POST',
@@ -32,7 +45,7 @@ export async function createSession({
 
 		if (response.ok) {
 			const data = await response.json();
-			console.log('Session created successfully:', data.session);
+			console.log('Session created successfully:', data);
 			return data;
 		} else {
 			const error = await response.json();
