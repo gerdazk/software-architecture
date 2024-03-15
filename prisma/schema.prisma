@@ -23,14 +23,14 @@ model User {
 model Session {
   id String @id @default(cuid())
   //coachEmail String
-  title String @default("default")
-  sport String @default("default")
-  city String @default("")
-  date String @default("")
-  sessionStart String @default("")
-  sessionFinish String @default("")
-  capacity Int @default(7)
-  description String @default("")
+  title String
+  sport String
+  city String
+  date String
+  sessionStart String
+  sessionFinish String
+  capacity Int
+  description String
   type Boolean @default(false)
   approvable Boolean @default(false)
   createdAt DateTime @default(now())

@@ -43,8 +43,8 @@ const formSchema = z.object({
 	sessionFinish: z.string(),
 	capacity: z.number(),
 	description: z.string(),
-	type: z.boolean(),
-	approvable: z.boolean(),
+	type: z.boolean().default(false),
+	approvable: z.boolean().default(false),
 });
 
 export function SessionDialog() {
