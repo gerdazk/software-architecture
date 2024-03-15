@@ -25,13 +25,15 @@ import { format } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
+import { createSession } from '@/src/utils/createSession';
 
 const formSchema = z.object({
-	sessionTitle: z.string().nonempty('Session title is required'),
-	sport: z.string().nonempty('Sport is required'),
+	title: z.string(),
+	sport: z.string(),
+	city: z.string(),
 	date: z.date(),
-	timeStart: z.string(),
-	timeFinish: z.string(),
+	sessionStart: z.string(),
+	sessionFinish: z.string(),
 	capacity: z
 		.number()
 		.min(1, {
@@ -40,28 +42,41 @@ const formSchema = z.object({
 		.max(100, {
 			message: 'Capacity must be at most 100.',
 		})
-		.default(0),
-	recurringSession: z.boolean(),
-	requiresCoachApproval: z.boolean(),
+		.default(5),
+	description: z.string(),
+	type: z.boolean(),
+	approvable: z.boolean(),
 });
 
 export function SessionDialog() {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			sessionTitle: '',
-			sport: '',
+			title: 'title',
+			sport: 'sport',
+			city: 'Some City',
 			date: new Date(),
-			timeStart: '',
-			timeFinish: '',
-			capacity: 0,
-			recurringSession: false,
-			requiresCoachApproval: false,
+			sessionStart: 'some start',
+			sessionFinish: 'some finish',
+			capacity: 5,
+			description: 'Session description',
+			type: true,
+			approvable: true,
 		},
 	});
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {
-		console.log(values);
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		console.log({ values });
+		const result = await createSession({
+			...values,
+		});
+
+		if (!result?.error) {
+			//setSuccessMessage('Sign up successful. You can now log in.');
+			console.log('Successfully created session:', result);
+		} else {
+			console.error('Failed from SessionDialog:', result?.error);
+		}
 	};
 
 	const [date, setDate] = React.useState<Date>();
@@ -87,7 +102,7 @@ export function SessionDialog() {
 						style={{ overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
 					>
 						<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 ml-2'>
-							<TextField control={form.control} label='Session Title' description='' name='sessionTitle' width='3/4' />
+							<TextField control={form.control} label='Session Title' description='' name='title' width='3/4' />
 							<FormItem>
 								<FormLabel>Sport</FormLabel>
 								<Select>
