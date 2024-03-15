@@ -35,12 +35,8 @@ export default async function RootLayout({
 							<div className='flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse'>
 								{session?.user?.email ? (
 									<div className='flex items-center justify-between'>
-										<div className='relative inline-flex items-center justify-center w-10 h-10 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600'>
-											<span className='font-medium text-gray-600 dark:text-gray-300'>{session.user.name}</span>
-										</div>
+										<p className='text-1xl text-gray-900 dark:text-white'>{session.user.email}</p>
 										<div className='ml-4'>
-											{' '}
-											{/* Add margin to the left */}
 											<LogOutButton />
 										</div>
 									</div>
@@ -85,9 +81,7 @@ export default async function RootLayout({
 							</div>
 						</div>
 					</nav>
-					<div className="mx-3 mb-6">
-					{children}
-					</div>
+					<div className='mx-3 mb-6'>{children}</div>
 				</body>
 			</html>
 		</Provider>
