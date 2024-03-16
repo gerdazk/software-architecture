@@ -1,6 +1,6 @@
 'use client';
 
-import React, { FormEventHandler } from 'react';
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -13,58 +13,63 @@ import {
 	DialogDescription,
 	DialogFooter,
 } from '@/components/ui/dialog';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormItem } from '@/components/ui/form';
 import { TextField } from '@/src/components/Input/TextField';
 import { Button } from '@/components/ui/button';
 import { SwitchField } from '../Input/SwitchField';
-import { Calendar } from '@/components/ui/calendar';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { CalendarIcon } from '@radix-ui/react-icons';
-import { format } from 'date-fns';
-import { cn } from '@/lib/utils';
-import { Slider } from '@/components/ui/slider';
-import { Textarea } from '@/components/ui/textarea';
+import { SelectField } from '@/src/components/Input/Select';
+import { DatePicker } from '@/src/components/Input/DatePicker';
+import { TextArea } from '@/src/components/Input/TextArea';
+import { SliderSelect } from '@/src/components/Input/SliderSelect';
+import { createSession } from '@/src/utils/createSession';
+
+const sports = [
+	{ label: 'Tennis', value: 'Tennis' },
+	{ label: 'Football', value: 'Football' },
+	{ label: 'Basketball', value: 'Basketball' },
+];
+
+const cities = [
+	{ label: 'Vilnius', value: 'Vilnius' },
+	{ label: 'Kaunas', value: 'Kaunas' },
+];
 
 const formSchema = z.object({
-	sessionTitle: z.string().nonempty('Session title is required'),
-	sport: z.string().nonempty('Sport is required'),
+	title: z.string(),
+	sport: z.string(),
+	city: z.string(),
 	date: z.date(),
-	timeStart: z.string(),
-	timeFinish: z.string(),
-	capacity: z
-		.number()
-		.min(1, {
-			message: 'Capacity must be at least 1.',
-		})
-		.max(100, {
-			message: 'Capacity must be at most 100.',
-		})
-		.default(0),
-	recurringSession: z.boolean(),
-	requiresCoachApproval: z.boolean(),
+	sessionStart: z.string(),
+	sessionFinish: z.string(),
+	capacity: z.number(),
+	description: z.string(),
+	type: z.boolean().default(false),
+	approvable: z.boolean().default(false),
 });
 
 export function SessionDialog() {
+	const [successMessage, setSuccessMessage] = useState('');
+
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {
-			sessionTitle: '',
-			sport: '',
-			date: new Date(),
-			timeStart: '',
-			timeFinish: '',
-			capacity: 0,
-			recurringSession: false,
-			requiresCoachApproval: false,
-		},
+		defaultValues: {},
 	});
 
-	const onSubmit = (values: z.infer<typeof formSchema>) => {
-		console.log(values);
-	};
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		console.log('Form submitted');
+		console.log({ values });
 
-	const [date, setDate] = React.useState<Date>();
+		const result = await createSession({
+			...values,
+		});
+
+		if (!result?.error) {
+			setSuccessMessage('Session created!');
+			console.log('Successfully created session:', result);
+		} else {
+			console.error('Failed from SessionDialog:', result?.error);
+		}
+	};
 
 	return (
 		<Dialog>
@@ -86,54 +91,43 @@ export function SessionDialog() {
 						className='h-[600px]'
 						style={{ overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
 					>
-						<form onSubmit={form.handleSubmit(onSubmit)} className='space-y-6 ml-2'>
-							<TextField control={form.control} label='Session Title' description='' name='sessionTitle' width='3/4' />
-							<FormItem>
-								<FormLabel>Sport</FormLabel>
-								<Select>
-									<SelectTrigger className='w-[200px]'>
-										<SelectValue placeholder='' />
-									</SelectTrigger>
-									<SelectContent>
-										<SelectItem value='tennis'>Tennis</SelectItem>
-										<SelectItem value='football'>Football</SelectItem>
-										<SelectItem value='baskteball'>Baskteball</SelectItem>
-									</SelectContent>
-								</Select>
-							</FormItem>
+						<form
+							onSubmit={form.handleSubmit((values) => {
+								try {
+									console.log('Submitting form with values:', values);
+									onSubmit(values);
+								} catch (error) {
+									console.error('Error submitting form:', error);
+								}
+							})}
+							className='space-y-6 ml-2'
+						>
+							<TextField control={form.control} label='Session Title' description='' name='title' width='3/4' />
+							<SelectField
+								options={sports}
+								control={form.control}
+								name='sport'
+								label='Sport'
+								placeholder='Select sport'
+								description=''
+								width='[200px]'
+							></SelectField>
 							<FormItem>
 								<div className='flex flex-col items-start'>
 									<div className='flex flex-row space-x-20'>
 										<div className='flex-1'>
-											<FormLabel className='mb-2'>Date </FormLabel>
-											<Popover>
-												<PopoverTrigger asChild>
-													<Button
-														variant={'outline'}
-														className={`w-[280px] justify-start text-left font-normal ${
-															!date && 'text-muted-foreground'
-														}`}
-													>
-														<CalendarIcon className='mr-2 h-4 w-4' />
-														{date ? format(date, 'PPP') : <span>Pick a date</span>}
-													</Button>
-												</PopoverTrigger>
-												<PopoverContent className='w-auto p-0'>
-													<Calendar mode='single' selected={date} onSelect={setDate} initialFocus />
-												</PopoverContent>
-											</Popover>
+											<DatePicker control={form.control} name='date' label='Date' description=''></DatePicker>
 										</div>
 										<div className='flex-1 '>
-											<FormLabel>City</FormLabel>
-											<Select>
-												<SelectTrigger className='w-[200px]'>
-													<SelectValue placeholder='' />
-												</SelectTrigger>
-												<SelectContent>
-													<SelectItem value='vilnius'>Vilnius</SelectItem>
-													<SelectItem value='kaunas'>Kaunas</SelectItem>
-												</SelectContent>
-											</Select>
+											<SelectField
+												options={cities}
+												control={form.control}
+												name='city'
+												label='City'
+												placeholder='Select city'
+												description=''
+												width='[200px]'
+											></SelectField>
 										</div>
 									</div>
 								</div>
@@ -143,8 +137,8 @@ export function SessionDialog() {
 											control={form.control}
 											label='Session starts at:'
 											description=''
-											name='timeStart'
 											type='time'
+											name='sessionStart'
 											width='1/3'
 										/>
 									</div>
@@ -153,45 +147,44 @@ export function SessionDialog() {
 											control={form.control}
 											label='Session finishes at:'
 											description=''
-											name='timeFinish'
 											type='time'
+											name='sessionFinish'
 											width='1/3'
 										/>
 									</div>
 								</div>
 							</FormItem>
-							<FormField
+							<SliderSelect
 								control={form.control}
+								label='Capacity: '
+								description='Select how many atendees there can be'
 								name='capacity'
-								render={({ field: { value, onChange } }) => (
-									<FormItem>
-										<FormLabel>Capacity - {value}</FormLabel>
-										<FormControl>
-											<Slider min={0} max={100} step={1} defaultValue={[value]} onValueChange={onChange} />
-										</FormControl>
-										<FormDescription>Select how many atendees there can be.</FormDescription>
-										<FormMessage />
-									</FormItem>
-								)}
+								min={1}
+								max={100}
+								step={1}
+							></SliderSelect>
+							<TextArea
+								control={form.control}
+								label='Description'
+								description=''
+								name='description'
+								placeholder='Write a description for your session.'
+								rows={6}
 							/>
-							<FormItem>
-								<FormLabel>Description</FormLabel>
-								<Textarea placeholder='Write a description for your session.' rows={6} />
-							</FormItem>
 							<SwitchField
 								control={form.control}
-								name='recurringSession'
+								name='type'
 								title='Recurring Session'
 								description='Check if this session is recurring'
 							/>
 							<SwitchField
 								control={form.control}
-								name='requiresCoachApproval'
+								name='approvable'
 								title='Requires Coach Approval'
 								description='Check if this session requires approval from a coach'
 							/>
 							<DialogFooter>
-								<Button type='submit'>Submit</Button>
+								{successMessage ? <div>{successMessage}</div> : <Button type='submit'>Submit</Button>}
 							</DialogFooter>
 						</form>
 					</div>
