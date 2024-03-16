@@ -22,7 +22,7 @@ model User {
 
 model Session {
   id String @id @default(cuid())
-  //coachEmail String
+  coachEmail String
   title String
   sport String
   city String

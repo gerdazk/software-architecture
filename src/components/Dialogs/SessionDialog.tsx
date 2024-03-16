@@ -22,6 +22,7 @@ import { DatePicker } from '@/src/components/Input/DatePicker';
 import { TextArea } from '@/src/components/Input/TextArea';
 import { SliderSelect } from '@/src/components/Input/SliderSelect';
 import { createSession } from '@/src/utils/createSession';
+import { useSession } from 'next-auth/react';
 
 const sports = [
 	{ label: 'Tennis', value: 'Tennis' },
@@ -45,14 +46,18 @@ const formSchema = z.object({
 	description: z.string(),
 	type: z.boolean().default(false),
 	approvable: z.boolean().default(false),
+	coachEmail: z.string()
 });
 
 export function SessionDialog() {
 	const [successMessage, setSuccessMessage] = useState('');
+	const { data } = useSession()
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {},
+		defaultValues: {
+			coachEmail: data?.user?.email || ''
+		},
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {

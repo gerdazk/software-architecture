@@ -9,6 +9,7 @@ interface SessionData {
 	description: string;
 	type: boolean;
 	approvable: boolean;
+	coachEmail: string;
 }
 
 export async function createSession({
@@ -22,6 +23,7 @@ export async function createSession({
 	description,
 	type,
 	approvable,
+	coachEmail
 }: SessionData) {
 	try {
 		const response = await fetch('/api/sessions', {
@@ -40,6 +42,7 @@ export async function createSession({
 				description,
 				type,
 				approvable,
+				coachEmail
 			}),
 		});
 
