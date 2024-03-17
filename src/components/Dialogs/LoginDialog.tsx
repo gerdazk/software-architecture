@@ -43,7 +43,6 @@ export const  LoginDialog = () => {
 
         if (!result?.error) {
           setDialogOpen(false)
-          console.log('Successfully logged in:', result);
         } else {
           setError("Login failed. Please check your login details.")
           console.error('Login failed:', result?.error);

@@ -48,7 +48,6 @@ export async function createSession({
 
 		if (response.ok) {
 			const data = await response.json();
-			console.log('Session created successfully:', data);
 			return data;
 		} else {
 			const error = await response.json();

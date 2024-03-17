@@ -61,16 +61,12 @@ export function SessionDialog() {
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log('Form submitted');
-		console.log({ values });
 
 		const result = await createSession({
 			...values,
 		});
 
 		if (!result?.error) {
-			setSuccessMessage('Session created!');
-			console.log('Successfully created session:', result);
 		} else {
 			console.error('Failed from SessionDialog:', result?.error);
 		}
