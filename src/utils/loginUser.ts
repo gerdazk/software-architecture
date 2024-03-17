@@ -1,4 +1,9 @@
-export async function loginUser({email, password}) {
+type LoginUserProps = {
+  email?: string
+  password?: string
+}
+
+export async function loginUser({email, password}: LoginUserProps) {
     try {
       const response = await fetch('http://localhost:3000/api/login', {
         method: 'POST',

@@ -23,6 +23,7 @@ import { TextArea } from '@/src/components/Input/TextArea';
 import { SliderSelect } from '@/src/components/Input/SliderSelect';
 import { createSession } from '@/src/utils/createSession';
 import { useSession } from 'next-auth/react';
+import { ROLES } from '@/src/globalTypes';
 
 const sports = [
 	{ label: 'Tennis', value: 'Tennis' },
@@ -81,8 +82,6 @@ export function SessionDialog() {
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log('Form submitted');
-		console.log({ values });
 
 		const result = await createSession({
 			...values,
@@ -97,13 +96,14 @@ export function SessionDialog() {
 
 	return (
 		<Dialog>
-			<DialogTrigger asChild>
+			<DialogTrigger asChild>{data?.user?.role === ROLES.COACH && 
 				<Button
-					variant='outline'
-					className='text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl  focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
-				>
-					Create session
-				</Button>
+				variant='outline'
+				className='text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl  focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+			>
+				Create session
+			</Button>
+			}
 			</DialogTrigger>
 			<DialogContent className='sm:max-w-[775px]'>
 				<DialogHeader>

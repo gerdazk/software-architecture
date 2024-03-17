@@ -18,6 +18,7 @@ export const TextField = ({ placeholder, control, name, label, description, type
 		<FormField
 			control={control}
 			name={name}
+			defaultValue=""
 			render={({ field }) => (
 				<FormItem>
 					<FormLabel>{label}</FormLabel>

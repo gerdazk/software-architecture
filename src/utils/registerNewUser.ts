@@ -10,7 +10,6 @@ export async function registerUser({name, email, password, requestedToBeCoach}) 
   
       if (response.ok) {
         const data = await response.json();
-        console.log('User registered successfully:', data.user);
         return data
       } else {
         const error = await response.json();
