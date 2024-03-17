@@ -13,9 +13,10 @@ export async function POST(req: {
 		description: string;
 		type: boolean;
 		approvable: boolean;
+		coachEmail: string;
 	}>;
 }) {
-	const { title, sport, city, date, sessionStart, sessionFinish, capacity, description, type, approvable } =
+	const { title, sport, city, date, sessionStart, sessionFinish, capacity, description, type, approvable, coachEmail } =
 		await req.json();
 	const prisma = new PrismaClient();
 
@@ -32,6 +33,7 @@ export async function POST(req: {
 				description,
 				type,
 				approvable,
+				coachEmail
 			},
 		});
 
