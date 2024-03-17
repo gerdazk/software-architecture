@@ -4,9 +4,12 @@ import { getCoachesAwaitingConfirmation } from '@/src/utils/getCoachesAwaitingCo
 import { useEffect, useState } from 'react';
 import { SingleCoachConfirmation } from './components/SingleCoachConfirmation';
 import { PageHeader } from '@/src/components/PageHeader';
+import { useSession } from 'next-auth/react';
+import { ROLES } from '@/src/globalTypes';
 
 export default function Page() {
 	const [coaches, setCoaches] = useState([]);
+	const { data } = useSession()
 
 	const getCoaches = async () => {
 		const allAwaitingCoaches = await getCoachesAwaitingConfirmation();
@@ -18,7 +21,7 @@ export default function Page() {
 	}, []);
 
 	return (
-		<div>
+		data?.user?.role === ROLES.ADMIN ? <div>
 			<PageHeader title='Coaches awaiting confirmation' subtitle='All coaches with unconfirmed profiles.' />
 
 			<div className='flex gap-3 w-full flex-col'>
@@ -26,6 +29,6 @@ export default function Page() {
 					return <SingleCoachConfirmation name={name} email={email} key={email} />;
 				})}
 			</div>
-		</div>
+		</div> : <div></div>
 	);
 }
