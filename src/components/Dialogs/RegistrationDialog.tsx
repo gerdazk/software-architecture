@@ -24,7 +24,7 @@ const formSchema = z
 		email: z.string(),
 		name: z.string().min(5),
 		password: z.string().min(8),
-		requestedToBeCoach: z.boolean(),
+		requestedToBeCoach: z.boolean().default(false),
 	})
 	.required();
 
@@ -33,12 +33,11 @@ export const RegistrationDialog = () => {
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			// username: ""
+			requestedToBeCoach: false
 		},
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log({ values });
 		const result = await registerUser({ ...values });
 
 		if (!result?.error) {

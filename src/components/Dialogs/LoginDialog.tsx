@@ -17,8 +17,10 @@ import {
 } from "@/components/ui/form"
 import { TextField } from "@/src/components/Input/TextField"
 import { signIn } from "next-auth/react"
+import { useState } from "react"
 
 export const  LoginDialog = () => {
+  const [isDialogOpen, setDialogOpen] = useState(false)
     const form = useForm({
         defaultValues: {}
       })
@@ -30,13 +32,14 @@ export const  LoginDialog = () => {
         });
 
         if (!result?.error) {
+          setDialogOpen(false)
           console.log('Successfully logged in:', result);
         } else {
           console.error('Login failed:', result?.error);
         }
       }
   return (
-    <Dialog>
+    <Dialog open={isDialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">Log in</Button>
       </DialogTrigger>
