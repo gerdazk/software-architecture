@@ -24,28 +24,32 @@ const formSchema = z
 		email: z.string(),
 		name: z.string().min(5),
 		password: z.string().min(8),
-		requestedToBeCoach: z.boolean(),
+		requestedToBeCoach: z.boolean().default(false),
 	})
 	.required();
 
 export const RegistrationDialog = () => {
 	const [successMessage, setSuccessMessage] = useState('');
+	const [error, setError] = useState("")
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
-			// username: ""
+			requestedToBeCoach: false
 		},
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
-		console.log({ values });
 		const result = await registerUser({ ...values });
 
 		if (!result?.error) {
 			setSuccessMessage('Sign up successful. You can now log in.');
-			console.log('Successfully logged in:', result);
 		} else {
-			console.error('Login failed:', result?.error);
+			console.error('Registration failed:', result?.error);
+			if(result.error.name === 'PrismaClientKnownRequestError') {
+				setError("Error creating new user. Client with this email address already exists.")
+			} else {
+				setError("Error creating new user.")
+			}
 		}
 	};
 	return (
@@ -77,7 +81,13 @@ export const RegistrationDialog = () => {
 							description='Create an account as coach. This account type will have to be accepted by administrators.'
 						/>
 						<DialogFooter>
+						{
+            !!error && (
+              <div className="text-destructive text-sm">{error}</div>
+            )
+          }
 							{successMessage ? <div>{successMessage}</div> : <Button type='submit'>Submit</Button>}
+							
 						</DialogFooter>
 					</form>
 				</Form>

@@ -22,6 +22,7 @@ import { DatePicker } from '@/src/components/Input/DatePicker';
 import { TextArea } from '@/src/components/Input/TextArea';
 import { SliderSelect } from '@/src/components/Input/SliderSelect';
 import { createSession } from '@/src/utils/createSession';
+import { useSession } from 'next-auth/react';
 
 const sports = [
 	{ label: 'Tennis', value: 'Tennis' },
@@ -34,25 +35,49 @@ const cities = [
 	{ label: 'Kaunas', value: 'Kaunas' },
 ];
 
-const formSchema = z.object({
-	title: z.string(),
-	sport: z.string(),
-	city: z.string(),
-	date: z.date(),
-	sessionStart: z.string(),
-	sessionFinish: z.string(),
-	capacity: z.number(),
-	description: z.string(),
-	type: z.boolean().default(false),
-	approvable: z.boolean().default(false),
-});
+const formSchema = z
+	.object({
+		title: z.string(),
+		sport: z.string(),
+		city: z.string(),
+		date: z.date(),
+		sessionStart: z.string(),
+		sessionFinish: z.string(),
+		capacity: z.number(),
+		description: z.string(),
+		type: z.boolean().default(false),
+		approvable: z.boolean().default(false),
+		coachEmail: z.string(),
+	})
+	.refine(
+		(data) => {
+			const startTime = parseTime(data.sessionStart);
+			const finishTime = parseTime(data.sessionFinish);
+			return startTime < finishTime;
+		},
+		{
+			message: 'Session finish time must be later than session start time',
+			path: ['sessionFinish'],
+		}
+	);
+
+function parseTime(timeString: string): Date {
+	const [hours, minutes] = timeString.split(':').map(Number);
+	return new Date(2000, 0, 1, hours, minutes);
+	// It will compare only hours and minutes of the selected time for the same
+	// dummy date.
+}
 
 export function SessionDialog() {
 	const [successMessage, setSuccessMessage] = useState('');
+	const [error, setError] = useState('');
+	const { data } = useSession();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {},
+		defaultValues: {
+			coachEmail: data?.user?.email || '',
+		},
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
@@ -65,9 +90,8 @@ export function SessionDialog() {
 
 		if (!result?.error) {
 			setSuccessMessage('Session created!');
-			console.log('Successfully created session:', result);
 		} else {
-			console.error('Failed from SessionDialog:', result?.error);
+			setError('Failed creating session.');
 		}
 	};
 
@@ -184,6 +208,7 @@ export function SessionDialog() {
 								description='Check if this session requires approval from a coach'
 							/>
 							<DialogFooter>
+								{!!error && <div className='text-destructive text-sm'>{error}</div>}
 								{successMessage ? <div>{successMessage}</div> : <Button type='submit'>Submit</Button>}
 							</DialogFooter>
 						</form>
