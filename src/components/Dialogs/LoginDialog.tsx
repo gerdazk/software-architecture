@@ -18,10 +18,20 @@ import {
 import { TextField } from "@/src/components/Input/TextField"
 import { signIn } from "next-auth/react"
 import { useState } from "react"
+import { zodResolver } from "@hookform/resolvers/zod"
+
+const formSchema = z
+	.object({
+		email: z.string(),
+		password: z.string(),
+	})
+	.required();
 
 export const  LoginDialog = () => {
   const [isDialogOpen, setDialogOpen] = useState(false)
-    const form = useForm({
+  const [error, setError] = useState("")
+    const form = useForm<z.infer<typeof formSchema>>({
+      resolver: zodResolver(formSchema),
         defaultValues: {}
       })
      
@@ -35,6 +45,7 @@ export const  LoginDialog = () => {
           setDialogOpen(false)
           console.log('Successfully logged in:', result);
         } else {
+          setError("Login failed. Please check your login details.")
           console.error('Login failed:', result?.error);
         }
       }
@@ -55,6 +66,11 @@ export const  LoginDialog = () => {
         <TextField control={form.control} label="Username" description="" placeholder="" name="email" />
         <TextField control={form.control} label="Password" description="" placeholder="" name="password" type="password" />
         <DialogFooter>
+          {
+            !!error && (
+              <div className="text-destructive text-sm">{error}</div>
+            )
+          }
           <Button type="submit">Submit</Button>
         </DialogFooter>
         </form>

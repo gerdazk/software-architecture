@@ -25,6 +25,6 @@ export async function POST(req) {
 		return NextResponse.json({ success: true, user, status: 201 });
 	} catch (error) {
 		console.error('Error creating user:', error);
-		return NextResponse.json({ success: false, error: 'Error creating user', status: 500 });
+		return NextResponse.json({ success: false, error: error, status: 500 });
 	}
 }

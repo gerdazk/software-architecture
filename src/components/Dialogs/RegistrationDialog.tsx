@@ -30,6 +30,7 @@ const formSchema = z
 
 export const RegistrationDialog = () => {
 	const [successMessage, setSuccessMessage] = useState('');
+	const [error, setError] = useState("")
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
 		defaultValues: {
@@ -42,9 +43,13 @@ export const RegistrationDialog = () => {
 
 		if (!result?.error) {
 			setSuccessMessage('Sign up successful. You can now log in.');
-			console.log('Successfully logged in:', result);
 		} else {
-			console.error('Login failed:', result?.error);
+			console.error('Registration failed:', result?.error);
+			if(result.error.name === 'PrismaClientKnownRequestError') {
+				setError("Error creating new user. Client with this email address already exists.")
+			} else {
+				setError("Error creating new user.")
+			}
 		}
 	};
 	return (
@@ -76,7 +81,13 @@ export const RegistrationDialog = () => {
 							description='Create an account as coach. This account type will have to be accepted by administrators.'
 						/>
 						<DialogFooter>
+						{
+            !!error && (
+              <div className="text-destructive text-sm">{error}</div>
+            )
+          }
 							{successMessage ? <div>{successMessage}</div> : <Button type='submit'>Submit</Button>}
+							
 						</DialogFooter>
 					</form>
 				</Form>
