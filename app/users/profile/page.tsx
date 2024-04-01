@@ -17,9 +17,9 @@ export default function Profile() {
 			</Avatar>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My email:</h2>
 			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>john@example.com</h3>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sports:</h2>
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My sports:</h2>
 			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>Tennis, Football</h3>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My description:</h2>
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My description:</h2>
 			<p className='scroll-m-20 text-xl font-normal tracking-tight'>
 				A coach is an individual who possesses expertise, experience, and a set of specialized skills in guiding,
 				training, and mentoring others to achieve specific goals or improve performance in various areas of life.
@@ -29,6 +29,12 @@ export default function Profile() {
 			</p>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My city:</h2>
 			<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>Vilnius</h3>
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] Pending session join requests:</h2>
+			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My rating:</h2>
+			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sessions:</h2>
+			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
 		</>
 	);
 }
