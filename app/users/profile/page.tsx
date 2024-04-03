@@ -2,19 +2,38 @@
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { ProfileDialog } from '@/src/components/Dialogs/ProfileDialog';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { getUser } from '@/src/utils/getUser';
 
 export default function Profile() {
+	const email = useSearchParams().get('email');
+	const [user, setUser] = useState([]);
+
+	const getUserInfo = async () => {
+		const userInfo = await getUser();
+		userInfo && setUser(userInfo.users);
+	};
+
+	useEffect(() => {
+		getUserInfo();
+	}, []);
+
 	return (
 		<>
 			<ProfileDialog></ProfileDialog>
 
-			<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>GET name</h1>
+			{user ? (
+				<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>name</h1>
+			) : (
+				<div>Loading...{email}</div>
+			)}
 			<Avatar style={{ width: '100px', height: '100px' }}>
 				<AvatarImage src='https://github.com/shadcn.png' style={{ width: '100%', height: '100%' }} />
 				<AvatarFallback style={{ fontSize: '40px' }}>NS</AvatarFallback>
 			</Avatar>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My email:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>GET email</h3>
+			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>email</h3>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My sports:</h2>
 			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>Tennis, Football</h3>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My description:</h2>
