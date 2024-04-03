@@ -1,8 +1,6 @@
 'use client';
-import { useState } from 'react';
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
 import { ProfileDialog } from '@/src/components/Dialogs/ProfileDialog';
 
 export default function Profile() {
@@ -10,13 +8,13 @@ export default function Profile() {
 		<>
 			<ProfileDialog></ProfileDialog>
 
-			<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>John Doe</h1>
+			<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>GET name</h1>
 			<Avatar style={{ width: '100px', height: '100px' }}>
 				<AvatarImage src='https://github.com/shadcn.png' style={{ width: '100%', height: '100%' }} />
 				<AvatarFallback style={{ fontSize: '40px' }}>NS</AvatarFallback>
 			</Avatar>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My email:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>john@example.com</h3>
+			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>GET email</h3>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My sports:</h2>
 			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>Tennis, Football</h3>
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My description:</h2>

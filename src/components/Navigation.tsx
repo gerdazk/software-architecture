@@ -18,7 +18,7 @@ export const Navigation = () => {
 				<div className='flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse'>
 					{data?.user?.email ? (
 						<div className='flex items-center justify-between'>
-							<a href='/users/profile' className='text-1xl text-gray-900 dark:text-white'>
+							<a href={`/users/profile?email=${data.user.email}`} className='text-1xl text-gray-900 dark:text-white'>
 								{data.user.email}
 							</a>
 							<div className='ml-4'>
