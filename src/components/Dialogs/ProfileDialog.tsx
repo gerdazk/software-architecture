@@ -35,27 +35,37 @@ const cities = [
 ];
 
 const formSchema = z.object({
-	name: z.string(),
 	email: z.string(),
-	//sport: z.string(),
+	name: z.string(),
 	city: z.string(),
 	description: z.string(),
 });
 
-export function ProfileDialog() {
+interface ProfileDialogProps {
+	user: UserData;
+}
+
+export function ProfileDialog({ user }: ProfileDialogProps) {
 	const [successMessage, setSuccessMessage] = useState('');
 	const [error, setError] = useState('');
 	const { data } = useSession();
 
 	const form = useForm<z.infer<typeof formSchema>>({
 		resolver: zodResolver(formSchema),
-		defaultValues: {},
+		defaultValues: {
+			email: user.email,
+			name: user.name,
+			city: user.city,
+			description: user.description,
+		},
 	});
 
 	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		console.log('Form submitted with values:', values);
 		const result = await updateUser({
 			...values,
 		});
+		console.log('Update user result:', result);
 
 		if (!result?.error) {
 			setSuccessMessage('User updated!');
@@ -95,7 +105,15 @@ export function ProfileDialog() {
 							})}
 							className='space-y-6 ml-2'
 						>
-							<TextField control={form.control} label='Name' description='' name='name' width='2/3' />
+							<TextField
+								control={form.control}
+								label='Name'
+								placeholder='some name'
+								description=''
+								name='name'
+								width='2/3'
+							/>
+							{user.role === 'coach' && <p>HAHA</p>}
 							{/* <MultipleSelectField
     options={sports}
     control={form.control}
@@ -108,7 +126,7 @@ export function ProfileDialog() {
 								control={form.control}
 								name='city'
 								label='City'
-								placeholder='Select city'
+								placeholder={user.city}
 								description=''
 								width='[200px]'
 							></SelectField>

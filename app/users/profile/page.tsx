@@ -31,7 +31,7 @@ export default function Profile() {
 	console.log('user:', user);
 	return (
 		<>
-			<ProfileDialog></ProfileDialog>
+			{user && <ProfileDialog user={user} />}
 
 			{user ? (
 				<>
