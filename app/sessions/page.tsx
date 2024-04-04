@@ -28,4 +28,4 @@ const Sessions = () => {
 	);
 };
 
-export default Sessions;
+export default Sessions
