@@ -43,3 +43,15 @@ export async function POST(req: {
 		return NextResponse.json({ success: false, error: 'Error creating session', status: 500 });
 	}
 }
+
+export async function GET() {
+	try {
+		const prisma = new PrismaClient();
+		const sessions = await prisma.session.findMany();
+
+		return NextResponse.json({ success: true, sessions, status: 200 });
+	} catch (error) {
+		console.error('Error fetching sessions:', error);
+		return NextResponse.json({ success: false, error: 'Error fetching sessions', status: 500 });
+	}
+}
