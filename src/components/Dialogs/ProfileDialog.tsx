@@ -35,27 +35,37 @@ const cities = [
 ]
 
 const formSchema = z.object({
-  name: z.string(),
-  email: z.string(),
-  //sport: z.string(),
-  city: z.string(),
-  description: z.string()
-})
+	email: z.string(),
+	name: z.string(),
+	city: z.string(),
+	description: z.string(),
+});
 
-export function ProfileDialog() {
-  const [successMessage, setSuccessMessage] = useState('')
-  const [error, setError] = useState('')
-  const { data } = useSession()
+interface ProfileDialogProps {
+	user: UserData;
+}
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {}
-  })
+export function ProfileDialog({ user }: ProfileDialogProps) {
+	const [successMessage, setSuccessMessage] = useState('');
+	const [error, setError] = useState('');
+	const { data } = useSession();
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const result = await updateUser({
-      ...values
-    })
+	const form = useForm<z.infer<typeof formSchema>>({
+		resolver: zodResolver(formSchema),
+		defaultValues: {
+			email: user.email,
+			name: user.name,
+			city: user.city,
+			description: user.description,
+		},
+	});
+
+	const onSubmit = async (values: z.infer<typeof formSchema>) => {
+		console.log('Form submitted with values:', values);
+		const result = await updateUser({
+			...values,
+		});
+		console.log('Update user result:', result);
 
     if (!result?.error) {
       setSuccessMessage('User updated!')
@@ -64,51 +74,48 @@ export function ProfileDialog() {
     }
   }
 
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button
-          variant="outline"
-          className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl  focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
-        >
-          Edit
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[775px]">
-        <DialogHeader>
-          <DialogTitle>Update information</DialogTitle>
-          <DialogDescription>
-            Fill out the fields below to update your information.
-          </DialogDescription>
-        </DialogHeader>
-        <Form {...form}>
-          <div
-            className="h-[600px]"
-            style={{
-              overflowY: 'auto',
-              overflowX: 'hidden',
-              scrollbarWidth: 'none',
-              msOverflowStyle: 'none'
-            }}
-          >
-            <form
-              onSubmit={form.handleSubmit(values => {
-                try {
-                  console.log('Submitting form with values:', values)
-                  onSubmit(values)
-                } catch (error) {
-                  console.error('Error submitting form:', error)
-                }
-              })}
-              className="space-y-6 ml-2"
-            >
-              <TextField
-                control={form.control}
-                label="Name"
-                description=""
-                name="name"
-                width="2/3"
-              />
+	return (
+		<Dialog>
+			<DialogTrigger asChild>
+				<Button
+					variant='outline'
+					className='text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl  focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+				>
+					Edit
+				</Button>
+			</DialogTrigger>
+			<DialogContent className='sm:max-w-[775px]'>
+				<DialogHeader>
+					<DialogTitle>Update information</DialogTitle>
+					<DialogDescription>Fill out the fields below to update your information.</DialogDescription>
+				</DialogHeader>
+				<Form {...form}>
+					<div
+						className='h-[600px]'
+						style={{ overflowY: 'auto', overflowX: 'hidden', scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+					>
+						<form
+							onSubmit={form.handleSubmit((values) => {
+								try {
+									console.log('Submitting form with values:', values);
+									onSubmit(values);
+								} catch (error) {
+									console.error('Error submitting form:', error);
+								}
+							})}
+							className='space-y-6 ml-2'
+						>
+							<TextField
+								control={form.control}
+								label='Name'
+								placeholder='some name'
+								description=''
+								name='name'
+								width='2/3'
+							/>
+							{user.role === 'coach' && <p>only coach sees this</p>}
+
+
               {/* <MultipleSelectField
     options={sports}
     control={form.control}
@@ -116,15 +123,16 @@ export function ProfileDialog() {
     label='Sport'
     description=''
   /> */}
-              <SelectField
-                options={cities}
-                control={form.control}
-                name="city"
-                label="City"
-                placeholder="Select city"
-                description=""
-                width="[200px]"
-              ></SelectField>
+
+							<SelectField
+								options={cities}
+								control={form.control}
+								name='city'
+								label='City'
+								placeholder={user.city}
+								description=''
+								width='[200px]'
+							></SelectField>
 
               <TextArea
                 control={form.control}

@@ -30,3 +30,20 @@ export async function GET(req) {
     })
   }
 }
+
+export async function PATCH(req) {
+	const { email, name, city, description } = await req.json();
+
+	const prisma = new PrismaClient();
+	try {
+		const updatedUser = await prisma.user.update({
+			where: { email },
+			data: { name: name, city: city, description: description },
+		});
+
+		return NextResponse.json({ success: true, user: updatedUser, status: 200 });
+	} catch (error) {
+		console.error('Error updating users:', error);
+		return NextResponse.json({ success: false, error: 'Error updating users', status: 500 });
+	}
+}

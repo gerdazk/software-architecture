@@ -1,24 +1,17 @@
-interface UserData {
-  name: string
-  email: string
-  city: string
-  description: string
-}
-
-export async function updateUser({ name, email, city, description }: UserData) {
-  try {
-    const response = await fetch('/api/users/coaches/concreteCoach', {
-      method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name,
-        email,
-        city,
-        description
-      })
-    })
+export async function updateUser({ email, name, city, description }: UserData) {
+	try {
+		const response = await fetch('/api/users', {
+			method: 'PATCH',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify({
+				email,
+				name,
+				city,
+				description,
+			}),
+		});
 
     if (response.ok) {
       const data = await response.json()

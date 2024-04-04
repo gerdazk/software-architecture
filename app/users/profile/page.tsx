@@ -28,10 +28,12 @@ export default function Profile() {
     getUserInfo()
   }, [])
 
-  console.log('user:', user)
-  return (
-    <>
-      <ProfileDialog></ProfileDialog>
+
+	console.log('user:', user);
+	return (
+		<>
+			{user && <ProfileDialog user={user} />}
+
 
       {user ? (
         <>
