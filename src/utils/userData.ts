@@ -3,4 +3,5 @@ interface UserData {
 	email: string;
 	city: string;
 	description: string;
+	role: string;
 }

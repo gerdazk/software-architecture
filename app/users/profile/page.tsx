@@ -8,50 +8,82 @@ import { getUser } from '@/src/utils/getUser';
 
 export default function Profile() {
 	const email = useSearchParams().get('email');
-	const [user, setUser] = useState([]);
+	const [user, setUser] = useState<UserData | undefined>();
 
 	const getUserInfo = async () => {
-		const userInfo = await getUser();
-		userInfo && setUser(userInfo.users);
+		try {
+			const userInfo = await getUser(email);
+			if (userInfo) {
+				const userData = userInfo;
+				setUser(userData);
+			} else {
+				console.error('Failed to fetch user:', userInfo.error);
+			}
+		} catch (error) {
+			console.error('Error fetching user:', error);
+		}
 	};
 
 	useEffect(() => {
 		getUserInfo();
 	}, []);
 
+	console.log('user:', user);
 	return (
 		<>
 			<ProfileDialog></ProfileDialog>
 
 			{user ? (
-				<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>name</h1>
+				<>
+					<h1 className='scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl'>{user.name}</h1>
+					<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>{user?.email}</h3>
+				</>
 			) : (
-				<div>Loading...{email}</div>
+				<div>Loading...</div>
 			)}
+
 			<Avatar style={{ width: '100px', height: '100px' }}>
 				<AvatarImage src='https://github.com/shadcn.png' style={{ width: '100%', height: '100%' }} />
 				<AvatarFallback style={{ fontSize: '40px' }}>NS</AvatarFallback>
 			</Avatar>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My email:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>email</h3>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My sports:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>Tennis, Football</h3>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] My description:</h2>
-			<p className='scroll-m-20 text-xl font-normal tracking-tight'>
-				A coach is an individual who possesses expertise, experience, and a set of specialized skills in guiding,
-				training, and mentoring others to achieve specific goals or improve performance in various areas of life.
-				Coaches can work in a wide range of fields, including sports, business, personal development, education, and
-				more. They play a crucial role in helping individuals and teams reach their full potential by providing
-				guidance, support, and accountability.
-			</p>
+
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My description:</h2>
+			{user ? (
+				<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>{user.description}</h3>
+			) : (
+				<div>Loading...</div>
+			)}
+
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My city:</h2>
-			<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>Vilnius</h3>
-			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>[IF COACH] Pending session join requests:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			{user ? <h3 className='scroll-m-20 text-xl font-normal tracking-tight'>{user.city}</h3> : <div>Loading...</div>}
+
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My rating:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			{user ? (
+				<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			) : (
+				<div>Loading...</div>
+			)}
+
 			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sessions:</h2>
-			<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			{user ? (
+				<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			) : (
+				<div>Loading...</div>
+			)}
+
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sports:</h2>
+			{user && user.role === 'coach' ? (
+				<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>(HARDCODED) Tennis, Football</h3>
+			) : (
+				<div>Loading...</div>
+			)}
+
+			<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>Pending session join requests:</h2>
+			{user && user.role === 'coach' ? (
+				<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
+			) : (
+				<div>Loading...</div>
+			)}
 		</>
 	);
 }

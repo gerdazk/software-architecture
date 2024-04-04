@@ -3,11 +3,20 @@ import { NextResponse } from 'next/server';
 
 export async function GET(req) {
 	try {
-		const { email } = await req.json();
+		const urlParams = new URLSearchParams(req.url.split('?')[1]);
+		const email = urlParams.get('email');
+
 		const prisma = new PrismaClient();
-		const user = await prisma.user.findFirst({
+		const user = await prisma.user.findUnique({
 			where: {
-				email: email,
+				email: email.toString(), // Ensure email is converted to string
+			},
+			select: {
+				name: true,
+				email: true,
+				city: true,
+				description: true,
+				role: true,
 			},
 		});
 		console.log('All good2');
