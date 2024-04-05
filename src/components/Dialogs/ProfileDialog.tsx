@@ -37,14 +37,16 @@ const formSchema = z.object({
 	email: z.string(),
 	name: z.string(),
 	city: z.string(),
+	sports: z.array(z.string()),
 	description: z.string(),
 });
 
 interface ProfileDialogProps {
 	user: UserData;
+	onUpdateUser: (updatedUser: UserData) => void;
 }
 
-export function ProfileDialog({ user }: ProfileDialogProps) {
+export function ProfileDialog({ user, onUpdateUser }: ProfileDialogProps) {
 	const [successMessage, setSuccessMessage] = useState('');
 	const [error, setError] = useState('');
 	const { data } = useSession();
@@ -55,6 +57,7 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 			email: user.email,
 			name: user.name,
 			city: user.city,
+			sports: user.sports,
 			description: user.description,
 		},
 	});
@@ -68,6 +71,7 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 
 		if (!result?.error) {
 			setSuccessMessage('User updated!');
+			onUpdateUser(result);
 		} else {
 			setError('Failed updating user.');
 		}
@@ -123,6 +127,13 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 								description=''
 								width='[200px]'
 							></SelectField>
+							<MultipleSelectField
+								options={sports}
+								control={form.control}
+								name='sports'
+								label='Sports'
+								description='Hold ctrl to select multiple sports.'
+							/>
 
 							<TextArea
 								control={form.control}

@@ -15,6 +15,7 @@ model User {
   city               String   @default("Vilnius")
   description        String   @default("Esu treneris...")
   role               String   @default("user")
+  sports             String   @default("")
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt
   requestedToBeCoach Boolean  @default(false)

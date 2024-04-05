@@ -5,12 +5,10 @@ import { ProfileDialog } from '@/src/components/Dialogs/ProfileDialog';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { getUser } from '@/src/utils/getUser';
-import { Progress } from '@/components/ui/progress';
 
 export default function Profile() {
 	const email = useSearchParams().get('email');
 	const [user, setUser] = useState<UserData | undefined>();
-	const [loading, setLoading] = useState(13);
 
 	const getUserInfo = async () => {
 		try {
@@ -26,19 +24,17 @@ export default function Profile() {
 		}
 	};
 
+	const updateUserState = (updatedUser: UserData) => {
+		//setUser(updatedUser);
+	};
+
 	useEffect(() => {
 		getUserInfo();
 	}, []);
 
-	useEffect(() => {
-		const timer = setTimeout(() => setLoading(66), 500);
-		return () => clearTimeout(timer);
-	}, []);
-
-	console.log('user:', user);
 	return (
 		<>
-			{user && <ProfileDialog user={user} />}
+			{user && <ProfileDialog user={user} onUpdateUser={updateUserState} />}
 
 			{user ? (
 				<>
@@ -52,14 +48,18 @@ export default function Profile() {
 					<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>{user.description}</h3>
 					<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My city:</h2>
 					<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>{user.city}</h3>
+					{user.role === 'coach' && (
+						<>
+							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sports:</h2>
+							<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>{user.sports}</h3>
+						</>
+					)}
 					<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My rating:</h2>
 					<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
 					<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sessions:</h2>
 					<h3 className='scroll-m-20 text-xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
 					{user.role === 'coach' && (
 						<>
-							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>My sports:</h2>
-							<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>(HARDCODED) Tennis, Football</h3>
 							<h2 className='scroll-m-20 text-2xl font-semibold tracking-tight'>Pending session join requests:</h2>
 							<h3 className='scroll-m-20 text-2xl font-normal tracking-tight'>TO BE IMPLEMENTED</h3>
 						</>
