@@ -9,6 +9,7 @@ import { getUser } from '@/src/utils/getUser';
 export default function Profile() {
 	const email = useSearchParams().get('email');
 	const [user, setUser] = useState<UserData | undefined>();
+	const [dialogOpen, setDialogOpen] = useState(false);
 
 	let rating = 0;
 	const maxRating = 5;
@@ -28,17 +29,21 @@ export default function Profile() {
 		}
 	};
 
-	const updateUserState = (updatedUser: UserData) => {
-		//setUser(updatedUser);
+	const updateUserState = () => {
+		getUserInfo();
 	};
 
 	useEffect(() => {
 		getUserInfo();
 	}, []);
 
+	const handleDialogClose = () => {
+		setDialogOpen(false);
+	};
+
 	return (
 		<>
-			{user && <ProfileDialog user={user} onUpdateUser={updateUserState} />}
+			{user && <ProfileDialog user={user} onUpdateUser={updateUserState} onClose={handleDialogClose} />}
 
 			{user ? (
 				<>

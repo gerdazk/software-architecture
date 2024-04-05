@@ -3,6 +3,6 @@ interface UserData {
 	email: string;
 	city: string;
 	description: string;
-	sports: string[];
+	sports?: string[];
 	role?: string;
 }
