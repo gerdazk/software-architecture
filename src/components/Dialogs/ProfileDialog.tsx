@@ -1,38 +1,37 @@
-'use client'
+'use client';
 
-import React, { useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { z } from 'zod'
+import React, { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from '@/components/ui/dialog'
-import { Form, FormItem } from '@/components/ui/form'
-import { TextField } from '@/src/components/Input/TextField'
-import { Button } from '@/components/ui/button'
-import { SelectField } from '@/src/components/Input/Select'
-import { TextArea } from '@/src/components/Input/TextArea'
-import { useSession } from 'next-auth/react'
-import { ROLES } from '@/src/globalTypes'
-import { updateUser } from '@/src/utils/updateUser'
-import { MultipleSelectField } from '@/src/components/Input/MultipleSelect'
+	Dialog,
+	DialogTrigger,
+	DialogContent,
+	DialogHeader,
+	DialogTitle,
+	DialogDescription,
+	DialogFooter,
+} from '@/components/ui/dialog';
+import { Form, FormItem } from '@/components/ui/form';
+import { TextField } from '@/src/components/Input/TextField';
+import { Button } from '@/components/ui/button';
+import { SelectField } from '@/src/components/Input/Select';
+import { TextArea } from '@/src/components/Input/TextArea';
+import { useSession } from 'next-auth/react';
+import { updateUser } from '@/src/utils/updateUser';
+import { MultipleSelectField } from '@/src/components/Input/MultipleSelect';
 
 const sports = [
-  { label: 'Tennis', value: 'Tennis' },
-  { label: 'Football', value: 'Football' },
-  { label: 'Basketball', value: 'Basketball' }
-]
+	{ label: 'Tennis', value: 'Tennis' },
+	{ label: 'Football', value: 'Football' },
+	{ label: 'Basketball', value: 'Basketball' },
+];
 
 const cities = [
-  { label: 'Vilnius', value: 'Vilnius' },
-  { label: 'Kaunas', value: 'Kaunas' }
-]
+	{ label: 'Vilnius', value: 'Vilnius' },
+	{ label: 'Kaunas', value: 'Kaunas' },
+];
 
 const formSchema = z.object({
 	email: z.string(),
@@ -67,12 +66,12 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 		});
 		console.log('Update user result:', result);
 
-    if (!result?.error) {
-      setSuccessMessage('User updated!')
-    } else {
-      setError('Failed updating user.')
-    }
-  }
+		if (!result?.error) {
+			setSuccessMessage('User updated!');
+		} else {
+			setError('Failed updating user.');
+		}
+	};
 
 	return (
 		<Dialog>
@@ -115,15 +114,6 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 							/>
 							{user.role === 'coach' && <p>only coach sees this</p>}
 
-
-              {/* <MultipleSelectField
-    options={sports}
-    control={form.control}
-    name='sport'
-    label='Sport'
-    description=''
-  /> */}
-
 							<SelectField
 								options={cities}
 								control={form.control}
@@ -134,29 +124,23 @@ export function ProfileDialog({ user }: ProfileDialogProps) {
 								width='[200px]'
 							></SelectField>
 
-              <TextArea
-                control={form.control}
-                label="Description"
-                description=""
-                name="description"
-                placeholder="Write a description for your session."
-                rows={6}
-              />
+							<TextArea
+								control={form.control}
+								label='Description'
+								description=''
+								name='description'
+								placeholder='Write a description for your session.'
+								rows={6}
+							/>
 
-              <DialogFooter>
-                {!!error && (
-                  <div className="text-destructive text-sm">{error}</div>
-                )}
-                {successMessage ? (
-                  <div>{successMessage}</div>
-                ) : (
-                  <Button type="submit">Submit</Button>
-                )}
-              </DialogFooter>
-            </form>
-          </div>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  )
+							<DialogFooter>
+								{!!error && <div className='text-destructive text-sm'>{error}</div>}
+								{successMessage ? <div>{successMessage}</div> : <Button type='submit'>Submit</Button>}
+							</DialogFooter>
+						</form>
+					</div>
+				</Form>
+			</DialogContent>
+		</Dialog>
+	);
 }
