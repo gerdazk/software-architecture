@@ -25,7 +25,7 @@ export default async function RootLayout({
       <html lang="en">
         <body className={inter.className}>
           <Navigation />
-          <div className="mx-3 mb-6">{children}</div>
+          <div className="mx-8 mb-6">{children}</div>
         </body>
       </html>
     </Provider>

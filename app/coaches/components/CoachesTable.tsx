@@ -9,6 +9,8 @@ import {
   VisibilityState,
   flexRender,
   getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
   getFilteredRowModel,
   getPaginationRowModel,
   getSortedRowModel,
@@ -32,6 +34,10 @@ import {
   TableRow
 } from '@/components/ui/table'
 import { Badge } from '@/components/ui/badge'
+
+import { sportOptions } from '../data'
+
+import { DataTableToolbar } from './DataTableToolbar'
 
 export type Session = {
   id: string
@@ -66,7 +72,7 @@ export const columns: ColumnDef<Session>[] = [
     enableHiding: false
   },
   {
-    accessorKey: 'sport',
+    accessorKey: 'sports',
     header: ({ column }) => {
       return (
         <Button
@@ -78,44 +84,35 @@ export const columns: ColumnDef<Session>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => (
-      <Badge className="capitalize">{row.getValue('sport')}</Badge>
-    )
+    cell: ({ row }) => {
+      const status = sportOptions.find(
+        sport => sport.value === row.getValue('sports')
+      )
+
+      if (!status) {
+        return null
+      }
+
+      return <Badge className="capitalize">{status.label}</Badge>
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   },
   {
-    accessorKey: 'title',
+    accessorKey: 'name',
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
         >
-          Title
+          Name
           <CaretSortIcon className="ml-2 h-4 w-4" />
         </Button>
       )
     },
-    cell: ({ row }) => <div className="lowercase">{row.getValue('title')}</div>
-  },
-  {
-    accessorKey: 'date',
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
-        >
-          Date
-          <CaretSortIcon className="ml-2 h-4 w-4" />
-        </Button>
-      )
-    },
-    cell: ({ row }) => <div>{row.getValue('date')}</div>
-  },
-  {
-    accessorKey: 'sessionStart',
-    header: 'Session start',
-    cell: ({ row }) => <div>{row.getValue('sessionStart')}</div>
+    cell: ({ row }) => <div className="lowercase">{row.getValue('name')}</div>
   },
   {
     accessorKey: 'city',
@@ -130,11 +127,14 @@ export const columns: ColumnDef<Session>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('city')}</div>
+    cell: ({ row }) => <div>{row.getValue('city')}</div>,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   }
 ]
 
-export function SessionTable({ data }: { data: Session[] }) {
+export function CoachesTable({ data }: { data: Session[] }) {
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -154,6 +154,9 @@ export function SessionTable({ data }: { data: Session[] }) {
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onRowSelectionChange: setRowSelection,
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues(),
+    enableRowSelection: true,
     state: {
       sorting,
       columnFilters,
@@ -164,15 +167,8 @@ export function SessionTable({ data }: { data: Session[] }) {
 
   return (
     <div className="w-full">
+      <DataTableToolbar table={table} />
       <div className="flex items-center py-4">
-        <Input
-          placeholder="Search by title..."
-          value={(table.getColumn('title')?.getFilterValue() as string) ?? ''}
-          onChange={event =>
-            table.getColumn('title')?.setFilterValue(event.target.value)
-          }
-          className="max-w-sm"
-        />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto">

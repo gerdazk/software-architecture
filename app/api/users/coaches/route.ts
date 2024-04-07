@@ -7,6 +7,11 @@ export async function GET() {
     const users = await prisma.user.findMany({
       where: {
         role: 'coach'
+      },
+      select: {
+        name: true,
+        city: true,
+        sports: true
       }
     })
 

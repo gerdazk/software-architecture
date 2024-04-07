@@ -11,7 +11,7 @@ model User {
   id                 String   @id @default(cuid())
   name               String
   password           String
-  email              String  @unique
+  email              String   @unique
   city               String   @default("Vilnius")
   description        String   @default("Esu treneris...")
   role               String   @default("user")
@@ -22,18 +22,18 @@ model User {
 }
 
 model Session {
-  id String @id @default(cuid())
-  coachEmail String
-  title String
-  sport String
-  city String
-  date String
-  sessionStart String
+  id            String   @id @default(cuid())
+  coachEmail    String
+  title         String
+  sport         String
+  city          String
+  date          String
+  sessionStart  String
   sessionFinish String
-  capacity Int
-  description String
-  type Boolean @default(false)
-  approvable Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  capacity      Int
+  description   String
+  type          Boolean  @default(false)
+  approvable    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
