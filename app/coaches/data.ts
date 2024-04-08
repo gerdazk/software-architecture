@@ -1,21 +1,25 @@
 export const sportOptions = [
-  {
-    value: 'basketball',
-    label: 'Basketball'
-  },
-  {
-    value: 'football',
-    label: 'Football'
-  }
-]
+	{
+		value: 'Basketball',
+		label: 'Basketball',
+	},
+	{
+		value: 'Football',
+		label: 'Football',
+	},
+	{
+		value: 'Tennis',
+		label: 'Tennis',
+	},
+];
 
 export const cityOptions = [
-  {
-    value: 'Vilnius',
-    label: 'Vilnius'
-  },
-  {
-    value: 'Kaunas',
-    label: 'Kaunas'
-  }
-]
+	{
+		value: 'Vilnius',
+		label: 'Vilnius',
+	},
+	{
+		value: 'Kaunas',
+		label: 'Kaunas',
+	},
+];
