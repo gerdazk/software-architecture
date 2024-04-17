@@ -9,7 +9,7 @@ type Option = {
 
 type Props = {
 	options: Option[];
-	sessionSport: string;
+	existingValue: string;
 	control: any;
 	name: string;
 	label: string;
@@ -17,7 +17,7 @@ type Props = {
 	width?: string;
 };
 
-export const SelectField = ({ options, sessionSport, control, name, label, description, width = 'full' }: Props) => {
+export const SelectField = ({ options, existingValue, control, name, label, description, width = 'full' }: Props) => {
 	return (
 		<FormField
 			control={control}
@@ -28,10 +28,10 @@ export const SelectField = ({ options, sessionSport, control, name, label, descr
 					<FormControl>
 						<Select
 							onValueChange={field.onChange}
-							defaultValue={options.find((option) => option.value === sessionSport)?.value || ''}
+							defaultValue={options.find((option) => option.value === existingValue)?.value || ''}
 						>
 							<SelectTrigger className={`w-${width}`}>
-								<SelectValue placeholder={sessionSport} />
+								<SelectValue placeholder={existingValue} />
 							</SelectTrigger>
 							<SelectContent>
 								{options.map((option) => (

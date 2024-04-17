@@ -64,17 +64,56 @@ export async function GET() {
 	}
 }
 
-export async function PATCH(req) {
-	const { email, name, city, sports, description } = await req.json();
-
+export async function PATCH(req: {
+	json: () => PromiseLike<{
+		title: string;
+		sport: string;
+		city: string;
+		date: string;
+		sessionStart: string;
+		sessionFinish: string;
+		capacity: number;
+		description: string;
+		type: boolean;
+		approvable: boolean;
+		coachEmail: string;
+		id: string;
+	}>;
+}) {
+	const {
+		title,
+		sport,
+		city,
+		date,
+		sessionStart,
+		sessionFinish,
+		capacity,
+		description,
+		type,
+		approvable,
+		coachEmail,
+		id,
+	} = await req.json();
 	const prisma = new PrismaClient();
 	try {
-		const updatedUser = await prisma.user.update({
-			where: { email },
-			data: { name: name, city: city, description: description, sports: sports },
+		const updatedSession = await prisma.session.update({
+			where: { id: id },
+			data: {
+				title,
+				sport,
+				city,
+				date,
+				sessionStart,
+				sessionFinish,
+				capacity,
+				description,
+				type,
+				approvable,
+				coachEmail,
+			},
 		});
 
-		return NextResponse.json({ success: true, user: updatedUser, status: 200 });
+		return NextResponse.json({ success: true, user: updatedSession, status: 200 });
 	} catch (error) {
 		console.error('Error updating users:', error);
 		return NextResponse.json({

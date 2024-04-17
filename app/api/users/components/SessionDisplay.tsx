@@ -3,10 +3,6 @@ import { SessionDialog } from '@/src/components/Dialogs/SessionDialog';
 import { ImPushpin } from 'react-icons/im';
 
 export function SessionDisplay({ session }) {
-	if (!session) {
-		return <div className='mb-2'>You haven't created any sessions.</div>;
-	}
-
 	return (
 		<div className='flex items-center space-x-4 rounded-md border p-4'>
 			<ImPushpin />

@@ -1,31 +1,63 @@
-export async function updateSession({ email, name, city, sports, description }: UserData) {
-	try {
-		const sportsString = sports.join(', ');
+interface SessionData {
+	title: string;
+	sport: string;
+	city: string;
+	date: string;
+	sessionStart: string;
+	sessionFinish: string;
+	capacity: number;
+	description: string;
+	type: boolean;
+	approvable: boolean;
+	coachEmail: string;
+	id: string;
+}
 
-		const response = await fetch('/api/users', {
+export async function updateSession({
+	title,
+	sport,
+	city,
+	date,
+	sessionStart,
+	sessionFinish,
+	capacity,
+	description,
+	type,
+	approvable,
+	coachEmail,
+	id,
+}: SessionData) {
+	try {
+		const response = await fetch('/api/sessions', {
 			method: 'PATCH',
 			headers: {
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				email,
-				name,
+				title,
+				sport,
 				city,
-				sports: sportsString,
+				date,
+				sessionStart,
+				sessionFinish,
+				capacity,
 				description,
+				type,
+				approvable,
+				coachEmail,
+				id,
 			}),
 		});
-		console.log('Sports in updateUser are: ', sportsString);
 		if (response.ok) {
 			const data = await response.json();
 			return data;
 		} else {
 			const error = await response.json();
-			console.error('User updated failed:', error);
+			console.error('Session updated failed:', error);
 			return;
 		}
 	} catch (error) {
-		console.error('Error user updated:', error);
+		console.error('Error session updated:', error);
 		return;
 	}
 }
