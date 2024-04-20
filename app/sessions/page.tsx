@@ -11,7 +11,7 @@ const Sessions = () => {
 
   const getSessions = async () => {
     const allSessions = await getAllSessions()
-    allSessions && setSessions(allSessions.sessions)
+    allSessions && setSessions(allSessions)
   }
 
   useEffect(() => {

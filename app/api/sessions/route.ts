@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
 export async function POST(req: {
   json: () => PromiseLike<{
@@ -59,18 +59,29 @@ export async function POST(req: {
   }
 }
 
-export async function GET() {
-  try {
-    const prisma = new PrismaClient()
-    const sessions = await prisma.session.findMany()
+export async function GET(req: NextRequest) {
+  const params = req.nextUrl.searchParams
+  const id = params.get('id')
+  const prisma = new PrismaClient()
 
-    return NextResponse.json({ success: true, sessions, status: 200 })
+  try {
+    const sessions = id
+      ? await prisma.session.findUnique({
+          where: {
+            id
+          },
+          include: {
+            UserSession: true
+          }
+        })
+      : await prisma.session.findMany()
+
+    return NextResponse.json(sessions, { status: 200 })
   } catch (error) {
-    console.error('Error fetching sessions:', error)
-    return NextResponse.json({
-      success: false,
-      error: 'Error fetching sessions',
-      status: 500
-    })
+    console.error('Error finding sessions:', error)
+    return NextResponse.json(
+      { success: false, error: 'Error finding sessions' },
+      { status: 500 }
+    )
   }
 }
