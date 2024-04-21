@@ -23,6 +23,8 @@ import { SliderSelect } from '@/src/components/Input/SliderSelect'
 import { createSession } from '@/src/utils/createSession'
 import { useSession } from 'next-auth/react'
 import { ROLES } from '@/src/globalTypes'
+import { updateSession } from '@/src/utils/updateSession'
+import { format, parseISO } from 'date-fns'
 
 import { SwitchField } from '../Input/SwitchField'
 
@@ -42,14 +44,15 @@ const formSchema = z
     title: z.string(),
     sport: z.string(),
     city: z.string(),
-    date: z.date(),
+    date: z.string(),
     sessionStart: z.string(),
     sessionFinish: z.string(),
     capacity: z.number(),
     description: z.string(),
     type: z.boolean().default(false),
     approvable: z.boolean().default(false),
-    coachEmail: z.string()
+    coachEmail: z.string(),
+    id: z.string()
   })
   .refine(
     data => {
@@ -70,7 +73,13 @@ function parseTime(timeString: string): Date {
   // dummy date.
 }
 
-export function SessionDialog() {
+export function SessionDialog({
+  update,
+  session
+}: {
+  update: boolean
+  session?: any
+}) {
   const [successMessage, setSuccessMessage] = useState('')
   const [error, setError] = useState('')
   const { data } = useSession()
@@ -78,21 +87,50 @@ export function SessionDialog() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      coachEmail: data?.user?.email || ''
+      title: session?.title || '',
+      sport: session?.sport || '',
+      city: session?.city || '',
+      date: session?.date || '',
+      sessionStart: session?.sessionStart || '',
+      sessionFinish: session?.sessionFinish || '',
+      capacity: session?.capacity || 1,
+      description: session?.description || '',
+      type: session?.type || false,
+      approvable: session?.approvable || false,
+      coachEmail: data?.user?.email || '',
+      id: session?.id || ''
     }
   })
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const result = await createSession({
-      ...values
-    })
-
+    const result = update
+      ? await updateSession({ ...values })
+      : await createSession({ ...values })
+    if (update) {
+      console.log(result.id)
+    }
     if (!result?.error) {
-      setSuccessMessage('Session created!')
+      setSuccessMessage('Session created/updated!')
     } else {
-      setError('Failed creating session.')
+      setError('Failed creatin/pdating session.')
     }
   }
+
+  const dialogTitle = update ? 'Update your session' : 'Create a Session'
+  const dialogDescription = update
+    ? 'You can change the details below to update your session'
+    : 'Fill out the details below to create a new session'
+  const buttonText = update ? 'Update session' : 'Create session'
+  const sessionTitle = session ? session.title : ''
+  const sessionSport = session ? session.sport : ''
+  const sessionDate = session ? session.date : ''
+  const sessionCity = session ? session.city : ''
+  const sessionStart = session ? session.sessionStart : ''
+  const sessionFinish = session ? session.sessionFinish : ''
+  const sessionCapacity = session ? session.capacity : 0
+  const sessionDescription = session ? session.description : ''
+  const sessionRecurring = session ? session.type : false
+  const sessionApprovable = session ? session.approvable : false
 
   return (
     <Dialog>
@@ -102,16 +140,14 @@ export function SessionDialog() {
             variant="outline"
             className="text-white bg-gradient-to-br from-green-400 to-blue-600 hover:bg-gradient-to-bl  focus:outline-none focus:ring-green-200 dark:focus:ring-green-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2"
           >
-            Create session
+            {buttonText}
           </Button>
         )}
       </DialogTrigger>
       <DialogContent className="sm:max-w-[775px]">
         <DialogHeader>
-          <DialogTitle>Create a Session</DialogTitle>
-          <DialogDescription>
-            Fill out the details below to create a new session
-          </DialogDescription>
+          <DialogTitle>{dialogTitle}</DialogTitle>
+          <DialogDescription>{dialogDescription}</DialogDescription>
         </DialogHeader>
         <Form {...form}>
           <div
@@ -140,13 +176,14 @@ export function SessionDialog() {
                 description=""
                 name="title"
                 width="3/4"
+                value={sessionTitle}
               />
               <SelectField
                 options={sports}
+                existingValue={sessionSport}
                 control={form.control}
                 name="sport"
                 label="Sport"
-                placeholder="Select sport"
                 description=""
                 width="[200px]"
               ></SelectField>
@@ -156,6 +193,7 @@ export function SessionDialog() {
                     <div className="flex-1">
                       <DatePicker
                         control={form.control}
+                        existingValue={sessionDate}
                         name="date"
                         label="Date"
                         description=""
@@ -164,10 +202,10 @@ export function SessionDialog() {
                     <div className="flex-1 ">
                       <SelectField
                         options={cities}
+                        existingValue={sessionCity}
                         control={form.control}
                         name="city"
                         label="City"
-                        placeholder="Select city"
                         description=""
                         width="[200px]"
                       ></SelectField>
@@ -178,6 +216,7 @@ export function SessionDialog() {
                   <div className="flex-1">
                     <TextField
                       control={form.control}
+                      value={sessionStart}
                       label="Session starts at:"
                       description=""
                       type="time"
@@ -188,6 +227,7 @@ export function SessionDialog() {
                   <div className="flex-1">
                     <TextField
                       control={form.control}
+                      value={sessionFinish}
                       label="Session finishes at:"
                       description=""
                       type="time"
@@ -199,6 +239,7 @@ export function SessionDialog() {
               </FormItem>
               <SliderSelect
                 control={form.control}
+                existingValue={sessionCapacity}
                 label="Capacity: "
                 description="Select how many atendees there can be"
                 name="capacity"
@@ -208,6 +249,7 @@ export function SessionDialog() {
               ></SliderSelect>
               <TextArea
                 control={form.control}
+                value={sessionDescription}
                 label="Description"
                 description=""
                 name="description"
@@ -216,12 +258,14 @@ export function SessionDialog() {
               />
               <SwitchField
                 control={form.control}
+                defaultValue={sessionRecurring}
                 name="type"
                 title="Recurring Session"
                 description="Check if this session is recurring"
               />
               <SwitchField
                 control={form.control}
+                defaultValue={sessionApprovable}
                 name="approvable"
                 title="Requires Coach Approval"
                 description="Check if this session requires approval from a coach"

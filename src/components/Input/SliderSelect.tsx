@@ -18,6 +18,7 @@ type Props = {
   max: number
   step: number
   width?: string
+  existingValue?: number // Add existingValue prop as optional
 }
 
 export const SliderSelect = ({
@@ -28,8 +29,10 @@ export const SliderSelect = ({
   min,
   max,
   step,
-  width = 'full'
+  width = 'full',
+  existingValue
 }: Props) => {
+  const myValue = existingValue ? existingValue : 1
   return (
     <FormField
       control={control}
@@ -45,7 +48,7 @@ export const SliderSelect = ({
               min={min}
               max={max}
               step={step}
-              defaultValue={field.value}
+              defaultValue={[myValue]} // Set defaultValue to existingValue if provided, otherwise to min
               onValueChange={v => field.onChange(v[0])}
             />
           </FormControl>

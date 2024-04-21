@@ -22,20 +22,20 @@ type Option = {
 
 type Props = {
   options: Option[]
+  existingValue: string
   control: any
   name: string
   label: string
-  placeholder: string
   description: string
   width?: string
 }
 
 export const SelectField = ({
   options,
+  existingValue,
   control,
   name,
   label,
-  placeholder,
   description,
   width = 'full'
 }: Props) => {
@@ -47,9 +47,15 @@ export const SelectField = ({
         <FormItem>
           <FormLabel>{label}</FormLabel>
           <FormControl>
-            <Select onValueChange={field.onChange}>
+            <Select
+              onValueChange={field.onChange}
+              defaultValue={
+                options.find(option => option.value === existingValue)?.value ||
+                ''
+              }
+            >
               <SelectTrigger className={`w-${width}`}>
-                <SelectValue placeholder={placeholder} />
+                <SelectValue placeholder={existingValue} />
               </SelectTrigger>
               <SelectContent>
                 {options.map(option => (

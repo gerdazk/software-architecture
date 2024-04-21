@@ -6,7 +6,7 @@ export async function POST(req: {
     title: string
     sport: string
     city: string
-    date: string // Specify type as Date
+    date: string
     sessionStart: string
     sessionFinish: string
     capacity: number
@@ -83,5 +83,69 @@ export async function GET(req: NextRequest) {
       { success: false, error: 'Error finding sessions' },
       { status: 500 }
     )
+  }
+}
+
+export async function PATCH(req: {
+  json: () => PromiseLike<{
+    title: string
+    sport: string
+    city: string
+    date: string
+    sessionStart: string
+    sessionFinish: string
+    capacity: number
+    description: string
+    type: boolean
+    approvable: boolean
+    coachEmail: string
+    id: string
+  }>
+}) {
+  const {
+    title,
+    sport,
+    city,
+    date,
+    sessionStart,
+    sessionFinish,
+    capacity,
+    description,
+    type,
+    approvable,
+    coachEmail,
+    id
+  } = await req.json()
+  const prisma = new PrismaClient()
+  try {
+    const updatedSession = await prisma.session.update({
+      where: { id: id },
+      data: {
+        title,
+        sport,
+        city,
+        date,
+        sessionStart,
+        sessionFinish,
+        capacity,
+        description,
+        type,
+        approvable,
+        coachEmail
+      }
+    })
+
+    return NextResponse.json({
+      success: true,
+      user: updatedSession,
+      status: 200
+    })
+  } catch (error) {
+    console.error('Error updating users:', error)
+    return NextResponse.json({
+      success: false,
+      error: 'Error updating users',
+      status: 500
+    })
   }
 }

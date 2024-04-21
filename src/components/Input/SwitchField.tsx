@@ -7,7 +7,13 @@ import {
 } from '@/components/ui/form'
 import { Switch } from '@/components/ui/switch'
 
-export const SwitchField = ({ control, name, title, description }) => {
+export const SwitchField = ({
+  control,
+  name,
+  title,
+  description,
+  defaultValue
+}) => {
   return (
     <FormField
       control={control}
@@ -19,7 +25,10 @@ export const SwitchField = ({ control, name, title, description }) => {
             <FormDescription>{description}</FormDescription>
           </div>
           <FormControl>
-            <Switch checked={field.value} onCheckedChange={field.onChange} />
+            <Switch
+              checked={field.value ?? defaultValue}
+              onCheckedChange={field.onChange}
+            />
           </FormControl>
         </FormItem>
       )}

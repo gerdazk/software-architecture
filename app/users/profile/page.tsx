@@ -1,6 +1,6 @@
 'use client'
 
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { ProfileDialog } from '@/src/components/Dialogs/ProfileDialog'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -16,10 +16,14 @@ import { PageHeader } from '@/src/components/PageHeader'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { useSession } from 'next-auth/react'
+import { getCoachSessions } from '@/src/utils/getCoachSessions'
+import { SessionTable } from '@/app/sessions/components/SessionTable'
+import { SessionDisplay } from '@/app/api/users/components/SessionDisplay'
 
 export default function Profile() {
   const email = useSearchParams().get('email')
   const [user, setUser] = useState<UserData | undefined>()
+  const [sessions, setSessions] = useState([])
   const [dialogOpen, setDialogOpen] = useState(false)
   const router = useRouter()
   const { data } = useSession()
@@ -51,6 +55,17 @@ export default function Profile() {
   const handleDialogClose = () => {
     setDialogOpen(false)
   }
+
+  const getSessions = async () => {
+    const allSessions = await getCoachSessions(email)
+    console.log('Email is:', email)
+    console.log('All sessions:', allSessions)
+    allSessions && setSessions(allSessions.sessions)
+  }
+
+  useEffect(() => {
+    getSessions()
+  }, [])
 
   return (
     <>
@@ -119,13 +134,25 @@ export default function Profile() {
             subtitle={
               user.role === 'user'
                 ? 'View all reservations'
-                : 'View all reservations'
+                : 'View my sessions'
             }
           />
-          <div className="mb-2">No sessions to display.</div>
-          <Button variant="outline" onClick={() => router.push('/sessions')}>
-            Add a session
-          </Button>
+          {sessions && sessions.length > 0 ? (
+            sessions.map((session, index) => (
+              <SessionDisplay key={index} session={session} />
+            ))
+          ) : (
+            <div className="mb-2">You haven't created any sessions.</div>
+          )}
+          {user.role === 'coach' ? (
+            <Button variant="outline" onClick={() => router.push('/sessions')}>
+              Add a session
+            </Button>
+          ) : (
+            <Button variant="outline" onClick={() => router.push('/sessions')}>
+              Join a session
+            </Button>
+          )}
         </div>
       ) : (
         <div

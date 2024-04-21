@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 type Props = {
   placeholder?: string
+  value: string
   control: any
   name: string
   label: string
@@ -22,6 +23,7 @@ type Props = {
 
 export const TextArea = ({
   placeholder,
+  value,
   control,
   name,
   label,
@@ -33,6 +35,7 @@ export const TextArea = ({
     <FormField
       control={control}
       name={name}
+      defaultValue={value}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>

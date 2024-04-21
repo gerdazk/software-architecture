@@ -20,7 +20,7 @@ const Sessions = () => {
 
   return (
     <div className="mx-auto flex-wrap items-center justify-between mx-auto p-4">
-      <SessionDialog />
+      <SessionDialog update={false} />
       <PageHeader title="All sessions" />
       <div className="gap-6 flex flex-col">
         <SessionTable data={sessions} />

@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input'
 
 type Props = {
   placeholder?: string
+  value: string
   control: any
   name: string
   label: string
@@ -22,6 +23,7 @@ type Props = {
 
 export const TextField = ({
   placeholder,
+  value,
   control,
   name,
   label,
@@ -34,7 +36,7 @@ export const TextField = ({
     <FormField
       control={control}
       name={name}
-      defaultValue=""
+      defaultValue={value}
       render={({ field }) => (
         <FormItem>
           <FormLabel>{label}</FormLabel>

@@ -10,9 +10,10 @@ interface SessionData {
   type: boolean
   approvable: boolean
   coachEmail: string
+  id: string
 }
 
-export async function createSession({
+export async function updateSession({
   title,
   sport,
   city,
@@ -23,11 +24,12 @@ export async function createSession({
   description,
   type,
   approvable,
-  coachEmail
+  coachEmail,
+  id
 }: SessionData) {
   try {
     const response = await fetch('/api/sessions', {
-      method: 'POST',
+      method: 'PATCH',
       headers: {
         'Content-Type': 'application/json'
       },
@@ -42,20 +44,20 @@ export async function createSession({
         description,
         type,
         approvable,
-        coachEmail
+        coachEmail,
+        id
       })
     })
-
     if (response.ok) {
       const data = await response.json()
       return data
     } else {
       const error = await response.json()
-      console.error('Session creation failed:', error)
+      console.error('Session updated failed:', error)
       return
     }
   } catch (error) {
-    console.error('Error creating session:', error)
+    console.error('Error session updated:', error)
     return
   }
 }

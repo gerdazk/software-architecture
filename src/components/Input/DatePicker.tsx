@@ -14,21 +14,35 @@ import {
 } from '@/components/ui/popover'
 import { CalendarIcon } from '@radix-ui/react-icons'
 import { format } from 'date-fns'
-import { Calendar } from '@/components/ui/calendar' // Import the correct type
-import { SelectSingleEventHandler } from 'react-day-picker'
+import { Calendar } from '@/components/ui/calendar'
 
 type Props = {
   control: any
   name: string
   label: string
   description: string
+  existingValue?: Date
 }
 
-export const DatePicker = ({ control, name, label, description }: Props) => {
-  const [date, setDate] = React.useState<Date>()
+export const DatePicker = ({
+  control,
+  name,
+  label,
+  description,
+  existingValue
+}: Props) => {
+  const [date, setDate] = React.useState<Date | undefined>(existingValue)
+
   let footer = <p>Please pick a day.</p>
   if (date) {
     footer = <p>You picked {format(date, 'PP')}.</p>
+  }
+
+  // Convert selected date to string and pass it to field.onChange
+  const handleDateSelect = (selectedDate: Date, field: any) => {
+    const dateString = selectedDate.toISOString() // Convert Date to ISO string
+    setDate(selectedDate)
+    field.onChange(dateString) // Pass the string value to field.onChange
   }
 
   return (
@@ -53,8 +67,7 @@ export const DatePicker = ({ control, name, label, description }: Props) => {
                   initialFocus
                   mode="single"
                   selected={date}
-                  onDayClick={field.onChange}
-                  onSelect={setDate}
+                  onDayClick={date => handleDateSelect(date, field)}
                   footer={footer}
                 />
               </PopoverContent>
