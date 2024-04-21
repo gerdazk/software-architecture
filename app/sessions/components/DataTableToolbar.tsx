@@ -7,8 +7,6 @@ import { Button } from '@/components/ui/button'
 import { DataTableFacetedFilter } from '@/app/coaches/components/DataTableFacetedFilter'
 import { cityOptions, sportOptions } from '@/app/coaches/data'
 
-
-
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
 }

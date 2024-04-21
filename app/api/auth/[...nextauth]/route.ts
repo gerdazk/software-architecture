@@ -32,6 +32,8 @@ export const authOptions: AuthOptions = {
     async session({ session, token, user }) {
       // @ts-ignore
       session.user.role = user?.role ? user.role : token.user.role
+      // @ts-ignore
+      session.user.id = user?.id ? user.id : token.user.id
       return session
     },
     async jwt({ token, user }) {

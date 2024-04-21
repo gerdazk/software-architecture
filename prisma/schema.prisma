@@ -4,25 +4,27 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:root@127.0.0.1:3306/api"
+  url      = "mysql://root:newrootpassword@127.0.0.1:3306/api"
 }
 
 model User {
-  id                 String   @id @default(cuid())
+  id                 String        @id @default(cuid())
   name               String
   password           String
-  email              String   @unique
-  city               String   @default("Vilnius")
-  description        String   @default("Esu treneris...")
-  role               String   @default("user")
-  sports             String   @default("")
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
-  requestedToBeCoach Boolean  @default(false)
+  email              String        @unique
+  city               String        @default("Vilnius")
+  description        String        @default("Esu treneris...")
+  role               String        @default("user")
+  sports             String        @default("")
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  requestedToBeCoach Boolean       @default(false)
+  sessions           Session[]     @relation("UserSessions")
+  UserSession        UserSession[]
 }
 
 model Session {
-  id            String   @id @default(cuid())
+  id            String        @id @default(cuid())
   coachEmail    String
   title         String
   sport         String
@@ -32,8 +34,20 @@ model Session {
   sessionFinish String
   capacity      Int
   description   String
-  type          Boolean  @default(false)
-  approvable    Boolean  @default(false)
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  type          Boolean       @default(false)
+  approvable    Boolean       @default(false)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  participants  User[]        @relation("UserSessions")
+  UserSession   UserSession[]
+}
+
+model UserSession {
+  user        User    @relation(fields: [userId], references: [id])
+  session     Session @relation(fields: [sessionId], references: [id])
+  userId      String
+  sessionId   String
+  isConfirmed Boolean
+
+  @@id([userId, sessionId])
 }
