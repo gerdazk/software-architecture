@@ -1,10 +1,25 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
+import { isRequestBodyValid } from '@/src/utils/isRequestBodyValid'
 
-export async function POST(req) {
+import { loginSchema } from './schemas'
+
+export async function POST(req: NextRequest) {
   const { email, password } = await req.json()
   const prisma = new PrismaClient()
+
+  const isBodyValid = isRequestBodyValid({
+    schema: loginSchema,
+    body: {
+      email,
+      password
+    }
+  })
+
+  if (!isBodyValid) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+  }
 
   try {
     const user = await prisma.user.findUnique({

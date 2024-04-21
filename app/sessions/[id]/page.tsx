@@ -14,13 +14,17 @@ import { Badge } from '@/components/ui/badge'
 import { Session } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { addUserToSession } from '@/src/utils/addUserToSession'
+import dayjs from 'dayjs'
 
 import { isAllowedToRegister } from '../utils/isAllowedToRegister'
+import { isRegistrationOpen } from '../utils/isRegistrationOpen'
+import { isRegisteredToSession } from '../utils/isRegisteredToSession'
 
 export default function Page({ params }) {
   const [session, setSession] = useState<Session>({})
-  const [shouldDisplayRegisterButton, setShouldDisplayRegisterButton] =
-    useState(false)
+  const [isRegistrationOpened, setRegistrationOpened] = useState(false)
+  const [isRegistrationAllowed, setRegistrationAllowed] = useState(false)
+  const [isRegistered, setIsRegistered] = useState(false)
   const userSession = useSession()
 
   const getSession = async () => {
@@ -32,7 +36,20 @@ export default function Page({ params }) {
       sessionId: fetchedSession.id
     })
 
-    setShouldDisplayRegisterButton(shouldShowButton)
+    setRegistrationAllowed(!!shouldShowButton)
+
+    const shouldAllowRegistration = await isRegistrationOpen({
+      sessionId: fetchedSession.id
+    })
+
+    setRegistrationOpened(shouldAllowRegistration)
+
+    const isAlreadyRegistered = await isRegisteredToSession({
+      sessionId: fetchedSession.id,
+      user: userSession.data?.user
+    })
+
+    setIsRegistered(isAlreadyRegistered)
   }
 
   useEffect(() => {
@@ -49,19 +66,32 @@ export default function Page({ params }) {
     getSession()
   }
 
+  const getButtonText = () => {
+    if (!isRegistrationOpened) {
+      return 'Registration is closed'
+    }
+    if (isRegistered) {
+      return 'You have already registered to this session'
+    }
+
+    return isRegistrationAllowed
+      ? 'Register to this session'
+      : 'You can not register to this session'
+  }
+
+  const buttonText = getButtonText()
+
   return (
     <>
       <PageHeader
         title="Session"
         subtitle="View session details"
-        buttonText={
-          shouldDisplayRegisterButton
-            ? 'Register to this session'
-            : 'You can not register to this session'
-        }
+        buttonText={buttonText}
         buttonVariant="outline"
         onButtonClick={handleUserRegistration}
-        disabled={!shouldDisplayRegisterButton}
+        disabled={
+          !isRegistrationAllowed || !isRegistrationOpened || isRegistered
+        }
       />
 
       {session ? (
@@ -99,7 +129,9 @@ export default function Page({ params }) {
               <CardHeader className="p-6 grid grid-cols-2 gap-5">
                 <div>
                   <CardTitle>Date</CardTitle>
-                  <CardDescription>{session.date}</CardDescription>
+                  <CardDescription>
+                    {dayjs(session.date).format('YYYY-MM-DD')}
+                  </CardDescription>
                 </div>
                 <div>
                   <CardTitle>Start time</CardTitle>
