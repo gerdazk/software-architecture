@@ -14,6 +14,7 @@ import { Badge } from '@/components/ui/badge'
 import { Session } from '@prisma/client'
 import { useSession } from 'next-auth/react'
 import { addUserToSession } from '@/src/utils/addUserToSession'
+import dayjs from 'dayjs'
 
 import { isAllowedToRegister } from '../utils/isAllowedToRegister'
 
@@ -99,7 +100,9 @@ export default function Page({ params }) {
               <CardHeader className="p-6 grid grid-cols-2 gap-5">
                 <div>
                   <CardTitle>Date</CardTitle>
-                  <CardDescription>{session.date}</CardDescription>
+                  <CardDescription>
+                    {dayjs(session.date).format('YYYY-MM-DD')}
+                  </CardDescription>
                 </div>
                 <div>
                   <CardTitle>Start time</CardTitle>
