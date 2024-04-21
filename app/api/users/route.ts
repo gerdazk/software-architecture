@@ -1,7 +1,10 @@
+import { isRequestBodyValid } from '@/src/utils/isRequestBodyValid'
 import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req) {
+import { userUpdateSchema } from './schemas'
+
+export async function GET(req: NextRequest) {
   try {
     const urlParams = new URLSearchParams(req.url.split('?')[1])
     const email = urlParams.get('email')
@@ -33,8 +36,23 @@ export async function GET(req) {
   }
 }
 
-export async function PATCH(req) {
+export async function PATCH(req: NextRequest) {
   const { email, name, city, sports, description } = await req.json()
+
+  const isBodyValid = isRequestBodyValid({
+    schema: userUpdateSchema,
+    body: {
+      email,
+      name,
+      city,
+      sports,
+      description
+    }
+  })
+
+  if (!isBodyValid) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+  }
 
   const prisma = new PrismaClient()
   try {
