@@ -146,11 +146,11 @@ export default function Profile() {
           )}
           {user.role === 'coach' ? (
             <Button variant="outline" onClick={() => router.push('/sessions')}>
-              Add a session
+              Go to sessions main page and create a session
             </Button>
           ) : (
             <Button variant="outline" onClick={() => router.push('/sessions')}>
-              Join a session
+              Go to sessions main page and join a session
             </Button>
           )}
         </div>

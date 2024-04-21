@@ -1,11 +1,28 @@
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 import bcrypt from 'bcrypt'
+import { isRequestBodyValid } from '@/src/utils/isRequestBodyValid'
+
+import { signUpSchema } from './schemas'
 
 const saltRounds = 10
 
-export async function POST(req) {
+export async function POST(req: NextRequest) {
   const { name, email, password, requestedToBeCoach } = await req.json()
+
+  const isBodyValid = isRequestBodyValid({
+    schema: signUpSchema,
+    body: {
+      name,
+      email,
+      password,
+      requestedToBeCoach
+    }
+  })
+
+  if (!isBodyValid) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+  }
 
   const prisma = new PrismaClient()
 

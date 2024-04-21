@@ -24,7 +24,7 @@ import { createSession } from '@/src/utils/createSession'
 import { useSession } from 'next-auth/react'
 import { ROLES } from '@/src/globalTypes'
 import { updateSession } from '@/src/utils/updateSession'
-import { format, parseISO } from 'date-fns'
+import { sessionSchema } from '@/app/api/sessions/schemas'
 
 import { SwitchField } from '../Input/SwitchField'
 
@@ -39,40 +39,6 @@ const cities = [
   { label: 'Kaunas', value: 'Kaunas' }
 ]
 
-const formSchema = z
-  .object({
-    title: z.string(),
-    sport: z.string(),
-    city: z.string(),
-    date: z.string(),
-    sessionStart: z.string(),
-    sessionFinish: z.string(),
-    capacity: z.number(),
-    description: z.string(),
-    type: z.boolean().default(false),
-    approvable: z.boolean().default(false),
-    coachEmail: z.string(),
-    id: z.string()
-  })
-  .refine(
-    data => {
-      const startTime = parseTime(data.sessionStart)
-      const finishTime = parseTime(data.sessionFinish)
-      return startTime < finishTime
-    },
-    {
-      message: 'Session finish time must be later than session start time',
-      path: ['sessionFinish']
-    }
-  )
-
-function parseTime(timeString: string): Date {
-  const [hours, minutes] = timeString.split(':').map(Number)
-  return new Date(2000, 0, 1, hours, minutes)
-  // It will compare only hours and minutes of the selected time for the same
-  // dummy date.
-}
-
 export function SessionDialog({
   update,
   session
@@ -84,8 +50,8 @@ export function SessionDialog({
   const [error, setError] = useState('')
   const { data } = useSession()
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof sessionSchema>>({
+    resolver: zodResolver(sessionSchema),
     defaultValues: {
       title: session?.title || '',
       sport: session?.sport || '',
@@ -102,10 +68,11 @@ export function SessionDialog({
     }
   })
 
-  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+  const onSubmit = async (values: z.infer<typeof sessionSchema>) => {
+    console.log({ values })
     const result = update
       ? await updateSession({ ...values })
-      : await createSession({ ...values })
+      : await createSession({ ...values, coachEmail: data?.user?.email || '' })
     if (update) {
       console.log(result.id)
     }

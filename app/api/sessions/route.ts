@@ -1,51 +1,23 @@
+import { isRequestBodyValid } from '@/src/utils/isRequestBodyValid'
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
-export async function POST(req: {
-  json: () => PromiseLike<{
-    title: string
-    sport: string
-    city: string
-    date: string
-    sessionStart: string
-    sessionFinish: string
-    capacity: number
-    description: string
-    type: boolean
-    approvable: boolean
-    coachEmail: string
-  }>
-}) {
-  const {
-    title,
-    sport,
-    city,
-    date,
-    sessionStart,
-    sessionFinish,
-    capacity,
-    description,
-    type,
-    approvable,
-    coachEmail
-  } = await req.json()
+import { sessionSchema } from './schemas'
+
+export async function POST(req: NextRequest) {
+  const body = await req.json()
   const prisma = new PrismaClient()
+
+  const isBodyValid =
+    body && isRequestBodyValid({ schema: sessionSchema, body })
+
+  if (!isBodyValid) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+  }
 
   try {
     const session = await prisma.session.create({
-      data: {
-        title,
-        sport,
-        city,
-        date,
-        sessionStart,
-        sessionFinish,
-        capacity,
-        description,
-        type,
-        approvable,
-        coachEmail
-      }
+      data: body
     })
 
     return NextResponse.json({ success: true, session, status: 201 })
@@ -86,54 +58,18 @@ export async function GET(req: NextRequest) {
   }
 }
 
-export async function PATCH(req: {
-  json: () => PromiseLike<{
-    title: string
-    sport: string
-    city: string
-    date: string
-    sessionStart: string
-    sessionFinish: string
-    capacity: number
-    description: string
-    type: boolean
-    approvable: boolean
-    coachEmail: string
-    id: string
-  }>
-}) {
-  const {
-    title,
-    sport,
-    city,
-    date,
-    sessionStart,
-    sessionFinish,
-    capacity,
-    description,
-    type,
-    approvable,
-    coachEmail,
-    id
-  } = await req.json()
+export async function PATCH(req: NextRequest) {
+  const body = await req.json()
   const prisma = new PrismaClient()
   try {
-    const updatedSession = await prisma.session.update({
-      where: { id: id },
-      data: {
-        title,
-        sport,
-        city,
-        date,
-        sessionStart,
-        sessionFinish,
-        capacity,
-        description,
-        type,
-        approvable,
-        coachEmail
-      }
-    })
+    const updatedSession =
+      body &&
+      (await prisma.session.update({
+        where: { id: body.id },
+        data: {
+          ...body
+        }
+      }))
 
     return NextResponse.json({
       success: true,
@@ -141,10 +77,10 @@ export async function PATCH(req: {
       status: 200
     })
   } catch (error) {
-    console.error('Error updating users:', error)
+    console.error('Error updating session:', error)
     return NextResponse.json({
       success: false,
-      error: 'Error updating users',
+      error: 'Error updating session',
       status: 500
     })
   }

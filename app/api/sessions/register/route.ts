@@ -1,8 +1,18 @@
+import { isRequestBodyValid } from '@/src/utils/isRequestBodyValid'
 import { PrismaClient } from '@prisma/client'
 import { NextRequest, NextResponse } from 'next/server'
 
+import { sessionRegisterSchema } from '../schemas'
+
 export async function POST(req: NextRequest) {
   const body = await req.json()
+
+  const isBodyValid =
+    body && isRequestBodyValid({ schema: sessionRegisterSchema, body })
+
+  if (!isBodyValid) {
+    return NextResponse.json({ error: 'Invalid body' }, { status: 400 })
+  }
 
   const prisma = new PrismaClient()
 

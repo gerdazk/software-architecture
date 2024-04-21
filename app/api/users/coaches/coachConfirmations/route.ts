@@ -1,7 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 
-export async function GET(req) {
+export async function GET() {
   try {
     const prisma = new PrismaClient()
     const users = await prisma.user.findMany({
@@ -24,7 +24,7 @@ export async function GET(req) {
   }
 }
 
-export async function PATCH(req) {
+export async function PATCH(req: NextRequest) {
   const { email } = await req.json()
   const prisma = new PrismaClient()
 
