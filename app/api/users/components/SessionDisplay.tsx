@@ -64,8 +64,6 @@ export function SessionDisplay({ session, user, email }) {
 			console.error('Error deleting:', error);
 		}
 	};
-	console.log('### email:', email);
-	console.log('### data?.user?.email:', data?.user?.email);
 	return (
 		<>
 			{!isDeleted && (
