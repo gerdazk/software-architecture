@@ -48,7 +48,7 @@ export default function Page({ params }) {
 			userId: userSession.data?.user?.id,
 		});
 		setWaitingForApproval(waitingForApproval);
-		console.log('isWaitingForApproval: ', isWaitingForApproval);
+		//console.log('isWaitingForApproval: ', isWaitingForApproval);
 
 		const permissionGranted = await hasCoachGrantedPermission({
 			sessionId: fetchedSession.id,
@@ -78,8 +78,8 @@ export default function Page({ params }) {
 
 		getSession();
 	};
-	console.log('approvable: ', session.approvable);
-	console.log('hasGrantedPermission: ', hasGrantedPermission);
+	//console.log('approvable: ', session.approvable);
+	//console.log('hasGrantedPermission: ', hasGrantedPermission);
 
 	const getButtonText = () => {
 		if (!isRegistrationOpened) {
@@ -97,8 +97,6 @@ export default function Page({ params }) {
 		if (isRegistrationAllowed) {
 			return 'Register to this session';
 		}
-		//return isRegistrationAllowed ? 'Register to this session' : 'You can not register to this session';
-
 		if (!isRegistrationAllowed) {
 			return 'You can not register to this session';
 		}
