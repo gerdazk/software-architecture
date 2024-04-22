@@ -35,7 +35,10 @@ export const columns: ColumnDef<Session>[] = [
     },
     cell: ({ row }) => (
       <Badge className="capitalize">{row.getValue('sport')}</Badge>
-    )
+    ),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   },
   {
     accessorKey: 'title',
@@ -85,7 +88,10 @@ export const columns: ColumnDef<Session>[] = [
         </Button>
       )
     },
-    cell: ({ row }) => <div>{row.getValue('city')}</div>
+    cell: ({ row }) => <div>{row.getValue('city')}</div>,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id))
+    }
   },
   {
     accessorKey: 'coachEmail',
