@@ -15,6 +15,7 @@ import { isRegistrationOpen } from '../utils/isRegistrationOpen';
 import { isRegisteredToSession } from '../utils/isRegisteredToSession';
 import { isApprovalNeeded } from '@/app/sessions/utils/isApprovalNeeded';
 import { hasCoachGrantedPermission } from '@/app/sessions/utils/hasCoachGrantedPermission';
+import { ROLES } from '@/src/globalTypes';
 
 export default function Page({ params }) {
 	const [session, setSession] = useState<Session>({});
@@ -85,7 +86,7 @@ export default function Page({ params }) {
 		if (!isRegistrationOpened) {
 			return 'Registration is closed';
 		}
-		if (isWaitingForApproval) {
+		if (isWaitingForApproval && userSession.data?.user?.role === ROLES.USER) {
 			return 'Waiting for coach to approve';
 		}
 		if (session.approvable && hasGrantedPermission) {
