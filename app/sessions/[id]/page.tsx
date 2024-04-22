@@ -13,11 +13,15 @@ import dayjs from 'dayjs';
 import { isAllowedToRegister } from '../utils/isAllowedToRegister';
 import { isRegistrationOpen } from '../utils/isRegistrationOpen';
 import { isRegisteredToSession } from '../utils/isRegisteredToSession';
+import { isApprovalNeeded } from '@/app/sessions/utils/isApprovalNeeded';
+import { hasCoachGrantedPermission } from '@/app/sessions/utils/hasCoachGrantedPermission';
 
 export default function Page({ params }) {
 	const [session, setSession] = useState<Session>({});
 	const [isRegistrationOpened, setRegistrationOpened] = useState(false);
 	const [isRegistrationAllowed, setRegistrationAllowed] = useState(false);
+	const [isWaitingForApproval, setWaitingForApproval] = useState(false);
+	const [hasGrantedPermission, setGrantedPermission] = useState(false);
 	const [isRegistered, setIsRegistered] = useState(false);
 	const userSession = useSession();
 
@@ -37,6 +41,21 @@ export default function Page({ params }) {
 		});
 
 		setRegistrationOpened(shouldAllowRegistration);
+
+		const waitingForApproval = await isApprovalNeeded({
+			approvable: fetchedSession.approvable,
+			sessionId: fetchedSession.id,
+			userId: userSession.data?.user?.id,
+		});
+		setWaitingForApproval(waitingForApproval);
+		console.log('isWaitingForApproval: ', isWaitingForApproval);
+
+		const permissionGranted = await hasCoachGrantedPermission({
+			sessionId: fetchedSession.id,
+			userId: userSession.data?.user?.id,
+			approvable: fetchedSession.approvable,
+		});
+		setGrantedPermission(permissionGranted);
 
 		const isAlreadyRegistered = await isRegisteredToSession({
 			sessionId: fetchedSession.id,
@@ -59,16 +78,30 @@ export default function Page({ params }) {
 
 		getSession();
 	};
+	console.log('approvable: ', session.approvable);
+	console.log('hasGrantedPermission: ', hasGrantedPermission);
 
 	const getButtonText = () => {
 		if (!isRegistrationOpened) {
 			return 'Registration is closed';
 		}
-		if (isRegistered) {
+		if (isWaitingForApproval) {
+			return 'Waiting for coach to approve';
+		}
+		if (session.approvable && hasGrantedPermission) {
+			return 'Coach approved you registration';
+		}
+		if (!session.approvable && isRegistered) {
 			return 'You have already registered to this session';
 		}
+		if (isRegistrationAllowed) {
+			return 'Register to this session';
+		}
+		//return isRegistrationAllowed ? 'Register to this session' : 'You can not register to this session';
 
-		return isRegistrationAllowed ? 'Register to this session' : 'You can not register to this session';
+		if (!isRegistrationAllowed) {
+			return 'You can not register to this session';
+		}
 	};
 
 	const buttonText = getButtonText();
@@ -81,7 +114,13 @@ export default function Page({ params }) {
 				buttonText={buttonText}
 				buttonVariant='outline'
 				onButtonClick={handleUserRegistration}
-				disabled={!isRegistrationAllowed || !isRegistrationOpened || isRegistered}
+				disabled={
+					!isRegistrationAllowed ||
+					!isRegistrationOpened ||
+					isRegistered ||
+					isWaitingForApproval ||
+					hasGrantedPermission
+				}
 			/>
 
 			{session ? (

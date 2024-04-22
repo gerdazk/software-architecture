@@ -16,10 +16,12 @@ import {
 	AlertDialogTitle,
 	AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useSession } from 'next-auth/react';
 
-export function SessionDisplay({ session }) {
+export function SessionDisplay({ session, user, email }) {
 	const [isSessionOpen, setIsSessionOpen] = useState(session.joinable);
 	const [isDeleted, setIsDeleted] = useState(false);
+	const { data } = useSession();
 
 	const closeSession = async () => {
 		try {
@@ -62,6 +64,8 @@ export function SessionDisplay({ session }) {
 			console.error('Error deleting:', error);
 		}
 	};
+	console.log('### email:', email);
+	console.log('### data?.user?.email:', data?.user?.email);
 	return (
 		<>
 			{!isDeleted && (
@@ -71,42 +75,47 @@ export function SessionDisplay({ session }) {
 						<p className='text-sm font-medium leading-none'>{session.title}</p>
 						<p className='text-sm text-muted-foreground'>{session.date.substring(0, 10)}</p>
 					</div>
-					<SessionDialog update session={session} />
-					{isSessionOpen ? (
-						<Button
-							variant='outline'
-							className='text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
-							onClick={() => closeSession()}
-						>
-							Close registration
-						</Button>
-					) : (
-						<Button
-							variant='outline'
-							className='text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
-							onClick={() => closeSession()}
-						>
-							Open registration
-						</Button>
+
+					{data?.user?.email === email && (
+						<>
+							<SessionDialog update session={session} />
+							{isSessionOpen ? (
+								<Button
+									variant='outline'
+									className='text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+									onClick={() => closeSession()}
+								>
+									Close registration
+								</Button>
+							) : (
+								<Button
+									variant='outline'
+									className='text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+									onClick={() => closeSession()}
+								>
+									Open registration
+								</Button>
+							)}
+							<AlertDialog>
+								<AlertDialogTrigger className='text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'>
+									<RiDeleteBinLine />
+								</AlertDialogTrigger>
+								<AlertDialogContent>
+									<AlertDialogHeader>
+										<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+										<AlertDialogDescription>
+											This action cannot be undone. This will permanently delete the session and remove all reservations
+											to that session.
+										</AlertDialogDescription>
+									</AlertDialogHeader>
+									<AlertDialogFooter>
+										<AlertDialogCancel>Cancel</AlertDialogCancel>
+										<AlertDialogAction onClick={() => deleteSession()}>Continue</AlertDialogAction>
+									</AlertDialogFooter>
+								</AlertDialogContent>
+							</AlertDialog>
+						</>
 					)}
-					<AlertDialog>
-						<AlertDialogTrigger className='text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'>
-							<RiDeleteBinLine />
-						</AlertDialogTrigger>
-						<AlertDialogContent>
-							<AlertDialogHeader>
-								<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-								<AlertDialogDescription>
-									This action cannot be undone. This will permanently delete the session and remove all reservations to
-									that session.
-								</AlertDialogDescription>
-							</AlertDialogHeader>
-							<AlertDialogFooter>
-								<AlertDialogCancel>Cancel</AlertDialogCancel>
-								<AlertDialogAction onClick={() => deleteSession()}>Continue</AlertDialogAction>
-							</AlertDialogFooter>
-						</AlertDialogContent>
-					</AlertDialog>
 				</div>
 			)}
 		</>

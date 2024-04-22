@@ -134,20 +134,24 @@ export default function Profile() {
 						subtitle={user.role === 'user' ? 'View all reservations' : 'View my sessions'}
 					/>
 					{sessions && sessions.length > 0 ? (
-						sessions.map((session, index) => <SessionDisplay key={index} session={session} />)
+						sessions.map((session, index) => <SessionDisplay key={index} session={session} user={user} email={email} />)
 					) : (
-						<div className='mb-2'>You haven't created any sessions.</div>
+						<div className='mb-2'>
+							{user.role === 'user' ? "You haven't joined any sessions." : "You haven't created any sessions."}
+						</div>
 					)}
-					{user.role === 'coach' ? (
+					{user.role === 'coach' && data?.user?.email === user.email && (
 						<Button variant='outline' onClick={() => router.push('/sessions')}>
 							Add a session
 						</Button>
-					) : (
+					)}
+					{user.role === 'user' && data?.user?.email === user.email && (
 						<Button variant='outline' onClick={() => router.push('/sessions')}>
 							Join a session
 						</Button>
 					)}
-					{user.role === 'coach' && (
+
+					{user.role === 'coach' && data?.user?.email === user.email && (
 						<>
 							<PageHeader
 								title='Waiting approval'
