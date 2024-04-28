@@ -46,12 +46,13 @@ model Session {
 }
 
 model UserSession {
-  user        User    @relation(fields: [userId], references: [id])
-  session     Session @relation(fields: [sessionId], references: [id])
-  userId      String
-  sessionId   String
-  isConfirmed Boolean
-  isRated     Boolean @default(false)
+  user           User    @relation(fields: [userId], references: [id])
+  session        Session @relation(fields: [sessionId], references: [id])
+  userId         String
+  sessionId      String
+  isConfirmed    Boolean
+  isUserRated    Boolean @default(false)
+  isSessionRated Boolean @default(false)
 
   @@id([userId, sessionId])
 }
