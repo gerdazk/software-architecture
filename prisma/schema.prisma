@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:root@127.0.0.1:3306/api"
+  url      = "mysql://root:newrootpassword@127.0.0.1:3306/api"
 }
 
 model User {
@@ -21,28 +21,30 @@ model User {
   requestedToBeCoach Boolean       @default(false)
   sessions           Session[]     @relation("UserSessions")
   rating             Int           @default(0)
+  numberOfRatings    Int           @default(0)
   UserSession        UserSession[]
 }
 
 model Session {
-  id            String        @id @default(cuid())
-  coachEmail    String
-  title         String
-  sport         String
-  city          String
-  date          String
-  sessionStart  String
-  sessionFinish String
-  capacity      Int
-  description   String
-  type          Boolean       @default(false)
-  approvable    Boolean       @default(false)
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  participants  User[]        @relation("UserSessions")
-  rating        Int           @default(0)
-  UserSession   UserSession[]
-  joinable      Boolean       @default(true)
+  id              String        @id @default(cuid())
+  coachEmail      String
+  title           String
+  sport           String
+  city            String
+  date            String
+  sessionStart    String
+  sessionFinish   String
+  capacity        Int
+  description     String
+  type            Boolean       @default(false)
+  approvable      Boolean       @default(false)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  participants    User[]        @relation("UserSessions")
+  rating          Int           @default(0)
+  numberOfRatings Int           @default(0)
+  UserSession     UserSession[]
+  joinable        Boolean       @default(true)
 }
 
 model UserSession {
