@@ -11,6 +11,6 @@ services:
       MYSQL_USER: doesntmatterlocalonly
       MYSQL_PASSWORD: root
     ports:
-      - "3306:3306"
+      - '3306:3306'
     volumes:
       - ./mysql-data:/var/lib/mysql

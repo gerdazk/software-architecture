@@ -1,8 +1,10 @@
 interface UserData {
-  name: string
-  email: string
-  city: string
-  description: string
-  sports?: string[]
-  role?: string
+	rating: number;
+	id: string;
+	name: string;
+	email: string;
+	city: string;
+	description: string;
+	sports?: string[];
+	role?: string;
 }

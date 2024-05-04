@@ -1,6 +1,7 @@
-export async function getCoachSessions(email) {
+export async function getAllUsersSessions(email) {
 	try {
-		const response = await fetch(`/api/sessions/coachSessions/?email=${email}`);
+		const response = await fetch(`/api/sessions/usersSessions/?email=${email}`);
+		console.log('USER email: ', email);
 		if (response.ok) {
 			const data = await response.json();
 			return data;

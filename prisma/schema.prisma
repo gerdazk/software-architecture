@@ -4,7 +4,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = "mysql://root:newrootpassword@127.0.0.1:3306/api"
+  url      = "mysql://root:root@127.0.0.1:3306/api"
 }
 
 model User {
@@ -54,6 +54,7 @@ model UserSession {
   sessionId      String
   isConfirmed    Boolean
   isUserRated    Boolean @default(false)
+  isCoachRated   Boolean @default(false)
   isSessionRated Boolean @default(false)
 
   @@id([userId, sessionId])
