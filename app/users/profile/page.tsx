@@ -16,6 +16,7 @@ import { ApprovalDisplay } from '@/app/api/users/components/ApprovalDisplay';
 import { getWaitingApprovals } from '@/src/utils/getWaitingApprovals';
 import { UserBookedSessions } from '@/app/api/users/components/UserBookedSessions';
 import { getAllUsersSessions } from '@/src/utils/getAllUsersSessions';
+import { Checkbox } from '@/components/ui/checkbox';
 
 export default function Profile() {
 	const email = useSearchParams().get('email');
@@ -25,10 +26,9 @@ export default function Profile() {
 	const [usersSessionsRegistered, setUsersSessionsRegistered] = useState([]);
 	const [shouldRefetchSessions, setShouldRefetchSessions] = useState(false);
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [viewDeleted, setViewDeleted] = useState(false);
 	const router = useRouter();
 	const { data } = useSession();
-
-	const rating = 0;
 
 	const getUserInfo = async () => {
 		try {
@@ -63,7 +63,17 @@ export default function Profile() {
 
 	const getUsersSessions = async () => {
 		const allUsersSessions = await getAllUsersSessions(email);
-		allUsersSessions && setUsersSessionsRegistered(allUsersSessions.sessions);
+		const updatedSessions = [];
+
+		for (const userSession of allUsersSessions.sessions) {
+			if (userSession.session.approvable && userSession.isConfirmed) {
+				updatedSessions.push(userSession);
+			} else if (!userSession.session.approvable) {
+				updatedSessions.push(userSession);
+			}
+		}
+
+		allUsersSessions && setUsersSessionsRegistered(updatedSessions);
 	};
 
 	useEffect(() => {
@@ -95,16 +105,12 @@ export default function Profile() {
 		getWaitingPeople();
 	}, []);
 
+	const handleViewDeleted = () => {
+		setViewDeleted(false);
+	};
+
 	return (
 		<>
-			{/* {user && (
-        <ProfileDialog
-          user={user}
-          onUpdateUser={updateUserState}
-          onClose={handleDialogClose}
-        />
-      )} */}
-
 			<PageHeader title='User profile' subtitle='View profile details' />
 
 			{user ? (
@@ -160,6 +166,15 @@ export default function Profile() {
 						title='My sessions'
 						subtitle={user.role === 'user' ? 'View all reservations' : 'View my sessions'}
 					/>
+					<div className='flex items-center space-x-2'>
+						<input type='checkbox' id='deleted' checked={viewDeleted} onChange={() => setViewDeleted(!viewDeleted)} />
+						<label
+							htmlFor='deleted'
+							className='text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70'
+						>
+							Show deleted sessions
+						</label>
+					</div>
 					{user.role === 'coach' && sessions?.length > 0 ? (
 						sessions.map((session, index) => (
 							<SessionDisplay
@@ -168,6 +183,7 @@ export default function Profile() {
 								user={user}
 								email={email}
 								onSessionChange={onSessionChange}
+								viewDeleted={viewDeleted}
 							/>
 						))
 					) : user.role === 'user' && usersSessionsRegistered?.length > 0 ? (
@@ -178,6 +194,7 @@ export default function Profile() {
 								user={user}
 								email={email}
 								onSessionChange={onSessionChange}
+								viewDeleted={viewDeleted}
 							/>
 						))
 					) : (

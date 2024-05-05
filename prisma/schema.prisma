@@ -45,6 +45,7 @@ model Session {
   numberOfRatings Int           @default(0)
   UserSession     UserSession[]
   joinable        Boolean       @default(true)
+  deleted         Boolean       @default(false)
 }
 
 model UserSession {

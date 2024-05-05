@@ -19,7 +19,7 @@ import dayjs from 'dayjs';
 
 import { UsersDialog } from './UsersDialog';
 
-export function SessionDisplay({ session, user, email, onSessionChange }) {
+export function SessionDisplay({ session, user, email, onSessionChange, viewDeleted }) {
 	const hasSessionEnded = dayjs(Date.now()).isAfter(dayjs(session.date));
 	const [isSessionOpen, setIsSessionOpen] = useState(session.joinable);
 	const [isDeleted, setIsDeleted] = useState(false);
@@ -47,8 +47,8 @@ export function SessionDisplay({ session, user, email, onSessionChange }) {
 	};
 	const deleteSession = async () => {
 		try {
-			const response = await fetch('/api/sessions', {
-				method: 'DELETE',
+			const response = await fetch('/api/sessions/deleted', {
+				method: 'PATCH',
 				headers: {
 					'Content-Type': 'application/json',
 				},
@@ -66,10 +66,10 @@ export function SessionDisplay({ session, user, email, onSessionChange }) {
 			console.error('Error deleting:', error);
 		}
 	};
-	console.log('2 users ', session.UserSession);
+
 	return (
 		<>
-			{!isDeleted && (
+			{!session.deleted && !viewDeleted && (
 				<div className='flex items-center space-x-4 rounded-md border p-4'>
 					<ImPushpin />
 					<div className='flex-1 space-y-1'>
@@ -77,7 +77,7 @@ export function SessionDisplay({ session, user, email, onSessionChange }) {
 						<p className='text-sm text-muted-foreground'>{session.date.substring(0, 10)}</p>
 					</div>
 
-					{data?.user?.email === email && (
+					{!session.deleted && data?.user?.email === email && (
 						<>
 							<UsersDialog
 								hasSessionEnded={hasSessionEnded}
@@ -111,8 +111,64 @@ export function SessionDisplay({ session, user, email, onSessionChange }) {
 									<AlertDialogHeader>
 										<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
 										<AlertDialogDescription>
-											This action cannot be undone. This will permanently delete the session and remove all reservations
-											to that session.
+											This action cannot be undone!!!. This will permanently delete the session and remove all
+											reservations to that session.
+										</AlertDialogDescription>
+									</AlertDialogHeader>
+									<AlertDialogFooter>
+										<AlertDialogCancel>Cancel</AlertDialogCancel>
+										<AlertDialogAction onClick={() => deleteSession()}>Continue</AlertDialogAction>
+									</AlertDialogFooter>
+								</AlertDialogContent>
+							</AlertDialog>
+						</>
+					)}
+				</div>
+			)}
+			{viewDeleted && (
+				<div className={`flex items-center space-x-4 rounded-md border p-4 ${session.deleted ? 'opacity-30' : ''}`}>
+					<ImPushpin />
+					<div className='flex-1 space-y-1'>
+						<p className='text-sm font-medium leading-none'>{session.title}</p>
+						<p className='text-sm text-muted-foreground'>{session.date.substring(0, 10)}</p>
+					</div>
+
+					{!session.deleted && data?.user?.email === email && (
+						<>
+							<UsersDialog
+								hasSessionEnded={hasSessionEnded}
+								users={session.UserSession}
+								onSessionChange={onSessionChange}
+							/>
+							{!hasSessionEnded && <SessionDialog update session={session} />}
+							{!hasSessionEnded &&
+								(isSessionOpen ? (
+									<Button
+										variant='outline'
+										className='text-white bg-gradient-to-r from-cyan-400 via-cyan-500 to-cyan-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+										onClick={() => closeSession()}
+									>
+										Close registration
+									</Button>
+								) : (
+									<Button
+										variant='outline'
+										className='text-white bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-teal-300 dark:focus:ring-teal-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'
+										onClick={() => closeSession()}
+									>
+										Open registration
+									</Button>
+								))}
+							<AlertDialog>
+								<AlertDialogTrigger className='text-white bg-gradient-to-r from-pink-400 via-pink-500 to-pink-600 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-pink-300 dark:focus:ring-pink-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center me-2 mb-2'>
+									<RiDeleteBinLine />
+								</AlertDialogTrigger>
+								<AlertDialogContent>
+									<AlertDialogHeader>
+										<AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+										<AlertDialogDescription>
+											This action cannot be undone!!!. This will permanently delete the session and remove all
+											reservations to that session.
 										</AlertDialogDescription>
 									</AlertDialogHeader>
 									<AlertDialogFooter>

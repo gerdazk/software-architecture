@@ -13,7 +13,6 @@ type UsersDialogProps = {
 };
 
 export const UsersDialog: React.FC<UsersDialogProps> = ({ users, hasSessionEnded, onSessionChange }) => {
-	console.log('3 users', users);
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
