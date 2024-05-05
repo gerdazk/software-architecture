@@ -139,7 +139,7 @@ export default function Profile() {
 							<div className='px-8'>
 								<CardTitle>Rating</CardTitle>
 								<Stars rating={user.rating} />
-								<CardDescription>{user.rating} out of 5</CardDescription>
+								<CardDescription>{user.rating.toFixed(1)} out of 5 </CardDescription>
 							</div>
 							<CardContent className='grid gap-4'></CardContent>
 						</Card>

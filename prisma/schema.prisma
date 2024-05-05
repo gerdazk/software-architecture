@@ -20,7 +20,7 @@ model User {
   updatedAt          DateTime      @updatedAt
   requestedToBeCoach Boolean       @default(false)
   sessions           Session[]     @relation("UserSessions")
-  rating             Int           @default(0)
+  rating             Float           @default(0)
   numberOfRatings    Int           @default(0)
   UserSession        UserSession[]
 }
@@ -41,7 +41,7 @@ model Session {
   createdAt       DateTime      @default(now())
   updatedAt       DateTime      @updatedAt
   participants    User[]        @relation("UserSessions")
-  rating          Int           @default(0)
+  rating          Int         @default(0)
   numberOfRatings Int           @default(0)
   UserSession     UserSession[]
   joinable        Boolean       @default(true)

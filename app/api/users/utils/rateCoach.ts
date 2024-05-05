@@ -4,7 +4,7 @@ export const rateCoach = async (props: { coachEmail: string; userId: number; ses
 			method: 'POST',
 			body: JSON.stringify(props),
 		});
-		console.log('TEST ', props);
+		console.log('TEST ', JSON.stringify(props));
 		if (response.ok) {
 			const data = await response.json();
 			return data;
